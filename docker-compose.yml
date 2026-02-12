@@ -1,5 +1,3 @@
-
-
 services:
   focus-flow:
     build:
@@ -12,20 +10,14 @@ services:
       - DATABASE_URL=file:/app/db/prod.db
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
-      # Google Auth - Add other providers as needed
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     volumes:
-      # Persist the SQLite database
+      # Mapping diretto della cartella per il DB SQLite
       - ./db:/app/db
-    # Run migrations on start (optional, or run manually)
-    # command: sh -c "npx prisma migrate deploy && node server.js" 
-    # For standalone output, we can't easily run npx prisma. 
-    # Better to run migrations separately or include prisma in the final image.
-    # We included prisma folder, so we might be able to run it if we install prisma CLI in runner.
-    # Simplifying: Assume DB is initialized or managed via volume.
     networks:
       - proxy-net
 
-volumes:
-  db:
+networks:
+  proxy-net:
+    external: true
