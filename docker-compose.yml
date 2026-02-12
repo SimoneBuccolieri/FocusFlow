@@ -24,10 +24,8 @@ services:
     # Better to run migrations separately or include prisma in the final image.
     # We included prisma folder, so we might be able to run it if we install prisma CLI in runner.
     # Simplifying: Assume DB is initialized or managed via volume.
+    networks:
+      - proxy-net
 
 volumes:
   db:
-
-networks:
-  proxy-net:
-    external: true
