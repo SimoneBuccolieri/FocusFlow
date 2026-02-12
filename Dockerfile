@@ -61,6 +61,7 @@ RUN npm install -g prisma
 
 # Copy Prisma schema and migrations if needed for runtime
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 # Copy the database file if it exists, though typically this should be volume mounted
 # But for first run, we might need to handle migrations or generation
 
