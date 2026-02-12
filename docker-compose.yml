@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: focus-flow-app
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/db/prod.db
@@ -29,3 +27,7 @@ services:
 
 volumes:
   db:
+
+networks:
+  proxy-net:
+    external: true
