@@ -62,12 +62,12 @@ export function Navbar() {
                             </button>
                         </>
                     ) : (
-                        <button
-                            onClick={() => signIn('google')}
+                        <Link
+                            href="/auth/signin"
                             className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-full text-sm font-medium transition-all hover:shadow-lg hover:shadow-primary/25"
                         >
                             Sign In
-                        </button>
+                        </Link>
                     )}
                 </div>
             </nav>

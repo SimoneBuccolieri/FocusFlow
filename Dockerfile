@@ -56,11 +56,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Install Prisma CLI for migrations
-RUN npm install -g prisma
+RUN npm install -g prisma@6.0.0
 
 # Copy Prisma schema and migrations if needed for runtime
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./
+
 # Copy the database file if it exists, though typically this should be volume mounted
 # But for first run, we might need to handle migrations or generation
 

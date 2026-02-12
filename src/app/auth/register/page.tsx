@@ -1,24 +1,46 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { ArrowLeft, User, Lock, Mail } from "lucide-react";
+import { ArrowLeft, User, Lock, Mail, Loader2, AlertCircle } from "lucide-react";
 
-export default function SignIn() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
+export default function RegisterPage() {
+    const router = useRouter();
+    const [data, setData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const registerUser = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
-        await signIn("credentials", {
-            email,
-            password,
-            callbackUrl: "/",
-        });
-        setLoading(false);
+        setIsLoading(true);
+        setError("");
+
+        try {
+            const res = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (res.ok) {
+                router.push("/auth/signin?registered=true");
+            } else {
+                const errorData = await res.json();
+                setError(errorData.message || "Registration failed");
+            }
+        } catch (err) {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -36,8 +58,8 @@ export default function SignIn() {
                     <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground mb-4 shadow-lg shadow-primary/25">
                         <User size={24} />
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight">FocusFlow Login</h1>
-                    <p className="text-muted-foreground text-sm">Welcome back, builder.</p>
+                    <h1 className="text-2xl font-bold tracking-tight">FocusFlow Register</h1>
+                    <p className="text-muted-foreground text-sm">Join the community, builder.</p>
                 </div>
 
                 <div className="space-y-4">
@@ -63,7 +85,7 @@ export default function SignIn() {
                                 fill="#EA4335"
                             />
                         </svg>
-                        Sign in with Google
+                        Sign up with Google
                     </button>
 
                     <div className="relative">
@@ -75,46 +97,69 @@ export default function SignIn() {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={registerUser} className="space-y-4">
+                        <div className="space-y-2">
+                            <div className="relative">
+                                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder="Full Name"
+                                    value={data.name}
+                                    onChange={(e) => setData({ ...data, name: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-2">
                             <div className="relative">
                                 <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                 <input
                                     type="email"
                                     placeholder="Email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={data.email}
+                                    onChange={(e) => setData({ ...data, email: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
                                     required
                                 />
                             </div>
                         </div>
+
                         <div className="space-y-2">
                             <div className="relative">
                                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                 <input
                                     type="password"
                                     placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={data.password}
+                                    onChange={(e) => setData({ ...data, password: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground/50"
                                     required
                                 />
                             </div>
                         </div>
+
+                        {error && (
+                            <div className="p-3 rounded-lg bg-red-500/10 text-red-500 text-sm text-center font-medium border border-red-500/20 flex items-center justify-center gap-2">
+                                <AlertCircle className="w-4 h-4" />
+                                {error}
+                            </div>
+                        )}
+
                         <button
                             type="submit"
-                            disabled={loading}
-                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 rounded-xl transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                            disabled={isLoading}
+                            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 rounded-xl transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center"
                         >
-                            {loading ? "Signing in..." : "Sign In"}
+                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create Account"}
                         </button>
                     </form>
 
                     <p className="text-center text-sm text-muted-foreground">
-                        Don't have an account?{" "}
-                        <Link href="/auth/register" className="text-primary hover:underline">
-                            Register
+                        Already have an account?{" "}
+                        <Link href="/auth/signin" className="text-primary hover:underline">
+                            Sign in
                         </Link>
                     </p>
                 </div>

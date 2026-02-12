@@ -1,4 +1,7 @@
 import { Navbar } from "@/components/Navbar";
+
+export const dynamic = "force-dynamic";
+
 import { getLeaderboard } from "@/lib/data";
 import { Leaderboard } from "@/components/Leaderboard";
 

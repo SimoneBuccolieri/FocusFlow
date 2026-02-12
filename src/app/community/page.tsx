@@ -1,5 +1,8 @@
 
 import { Navbar } from "@/components/Navbar";
+
+export const dynamic = "force-dynamic";
+
 import { getAllUsers } from "@/lib/data";
 import Link from "next/link";
 import { Search } from "lucide-react";
