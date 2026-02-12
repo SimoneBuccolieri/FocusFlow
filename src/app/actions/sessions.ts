@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { revalidatePath } from "next/cache"
 
-export async function updateSession(sessionId: string, data: { title?: string, description?: string }) {
+export async function updateSession(sessionId: string, data: { title?: string, description?: string, checklist?: any[] }) {
     const session = await getServerSession(authOptions)
 
     if (!session || !session.user) {
@@ -26,6 +26,7 @@ export async function updateSession(sessionId: string, data: { title?: string, d
         data: {
             title: data.title,
             description: data.description,
+            checklist: data.checklist || undefined, // Only update if provided
         },
     })
 

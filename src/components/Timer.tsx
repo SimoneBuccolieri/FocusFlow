@@ -1,6 +1,6 @@
 'use client';
 
-import { Play, Pause, RotateCcw, Coffee, Brain, BatteryCharging, Save } from 'lucide-react';
+import { Play, Pause, RotateCcw, Coffee, Brain, BatteryCharging, Save, Sliders } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePomodoro } from '@/hooks/usePomodoro';
 import { motion } from 'framer-motion';
@@ -9,15 +9,19 @@ type TimerProps = Omit<ReturnType<typeof usePomodoro>, 'stopAndSave'> & {
     stopAndSave: () => void | Promise<void>;
 };
 
-export function Timer({ timeLeft, isActive, mode, switchMode, toggleTimer, resetTimer, stopAndSave }: TimerProps) {
+export function Timer({ timeLeft, isActive, mode, switchMode, toggleTimer, resetTimer, stopAndSave, customDuration }: TimerProps) {
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const totalTime = mode === 'pomodoro' ? 25 * 60 : mode === 'shortBreak' ? 5 * 60 : 15 * 60;
-    const progress = ((totalTime - timeLeft) / totalTime) * 100;
+    const totalTime = mode === 'pomodoro' ? 25 * 60
+        : mode === 'shortBreak' ? 5 * 60
+            : mode === 'longBreak' ? 15 * 60
+                : customDuration; // Handle custom
+
+    const progress = totalTime ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
 
     // Circle configuration
     const size = 320;
@@ -32,6 +36,7 @@ export function Timer({ timeLeft, isActive, mode, switchMode, toggleTimer, reset
             case 'pomodoro': return <Brain size={20} className="mr-2" />;
             case 'shortBreak': return <Coffee size={20} className="mr-2" />;
             case 'longBreak': return <BatteryCharging size={20} className="mr-2" />;
+            case 'custom': return <Sliders size={20} className="mr-2" />;
         }
     };
 
@@ -40,6 +45,7 @@ export function Timer({ timeLeft, isActive, mode, switchMode, toggleTimer, reset
             case 'pomodoro': return 'Deep Focus';
             case 'shortBreak': return 'Short Break';
             case 'longBreak': return 'Long Break';
+            case 'custom': return 'Custom Focus';
         }
     };
 

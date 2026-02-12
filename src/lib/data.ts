@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { format, startOfYear, endOfYear } from "date-fns";
-import { ActivityData, Session } from "@/types";
+import { ActivityData, Session, ChecklistItem } from "@/types";
 
 export async function getUserActivity(userId: string, year: number = new Date().getFullYear()): Promise<ActivityData[]> {
     const startDate = startOfYear(new Date(year, 0, 1));
@@ -20,6 +20,8 @@ export async function getUserActivity(userId: string, year: number = new Date().
             durationSeconds: true,
             title: true,
             description: true,
+            // @ts-ignore
+            checklist: true,
         },
         orderBy: { startTime: 'asc' },
     });
@@ -40,7 +42,8 @@ export async function getUserActivity(userId: string, year: number = new Date().
             title: session.title,
             description: session.description,
             duration: session.durationSeconds, // Store seconds to be consistent
-            startTime: session.startTime
+            startTime: session.startTime,
+            checklist: Array.isArray((session as any).checklist) ? ((session as any).checklist as unknown as ChecklistItem[]) : [],
         });
 
         activityMap.set(date, current);
@@ -139,22 +142,15 @@ export async function getRecentSessions(userId: string, days: number = 7) {
             durationSeconds: true, // DB has durationSeconds
             title: true,
             description: true,
+            // @ts-ignore
+            checklist: true,
         }
     });
 
-    // Map to format expected by UI (duration in minutes if needed, or keep seconds and handle in UI)
-    // WeeklyProgress expects `duration` (number). Let's standardise on seconds or minutes?
-    // In WeeklyProgress I used `Math.round(session.duration / 60)`. So it expects seconds?
-    // "duration: number; // minutes or seconds?" I wrote in comments there.
-    // The heatmap uses minutes.
-    // Let's pass seconds and let UI handle it, or map to minutes here. 
-    // Let's map to objects that match the component expectation. 
-    // The component interface was: { id, startTime, duration, title, description }
-    // DB returns { id, startTime, durationSeconds, title, description }
-
     return sessions.map(s => ({
         ...s,
-        duration: s.durationSeconds // Pass seconds
+        duration: s.durationSeconds, // Pass seconds
+        checklist: Array.isArray((s as any).checklist) ? ((s as any).checklist as unknown as ChecklistItem[]) : [],
     }));
 }
 

@@ -1,15 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, Loader2 } from 'lucide-react'
 import { updateSession } from '@/app/actions/sessions'
+import { ChecklistItem } from '@/types'
+import { Checklist } from './Checklist'
 
 interface EditSessionDialogProps {
     session: {
         id: string
         title: string | null
         description: string | null
+        checklist?: ChecklistItem[] | null // Add checklist prop
     }
     isOpen: boolean
     onClose: () => void
@@ -19,12 +23,28 @@ interface EditSessionDialogProps {
 export function EditSessionDialog({ session, isOpen, onClose, onUpdate }: EditSessionDialogProps) {
     const [title, setTitle] = useState(session.title || '')
     const [description, setDescription] = useState(session.description || '')
+    const [checklist, setChecklist] = useState<ChecklistItem[]>(session.checklist || [])
     const [isLoading, setIsLoading] = useState(false)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+        return () => setMounted(false)
+    }, [])
+
+    // Reset state when session changes
+    useEffect(() => {
+        if (isOpen) {
+            setTitle(session.title || '')
+            setDescription(session.description || '')
+            setChecklist(session.checklist || [])
+        }
+    }, [session, isOpen])
 
     const handleSave = async () => {
         setIsLoading(true)
         try {
-            await updateSession(session.id, { title, description })
+            await updateSession(session.id, { title, description, checklist: checklist.filter(i => i.text.trim().length > 0) })
             onUpdate()
             onClose()
         } catch (error) {
@@ -35,7 +55,9 @@ export function EditSessionDialog({ session, isOpen, onClose, onUpdate }: EditSe
         }
     }
 
-    return (
+    if (!mounted) return null
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <>
@@ -44,13 +66,13 @@ export function EditSessionDialog({ session, isOpen, onClose, onUpdate }: EditSe
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
                     />
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 glass rounded-2xl z-50 shadow-2xl"
+                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 glass rounded-2xl z-[9999] shadow-2xl max-h-[90vh] overflow-y-auto"
                     >
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-xl font-bold">Modifica Sessione</h3>
@@ -81,6 +103,16 @@ export function EditSessionDialog({ session, isOpen, onClose, onUpdate }: EditSe
                                 />
                             </div>
 
+                            <div>
+                                <label className="block text-sm font-medium mb-1 text-muted-foreground">Checklist</label>
+                                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 min-h-[100px]">
+                                    <Checklist
+                                        items={checklist}
+                                        onChange={setChecklist}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="flex justify-end pt-4 gap-3">
                                 <button
                                     onClick={onClose}
@@ -102,6 +134,7 @@ export function EditSessionDialog({ session, isOpen, onClose, onUpdate }: EditSe
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     )
 }

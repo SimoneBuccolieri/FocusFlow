@@ -7,7 +7,7 @@ import { it } from 'date-fns/locale';
 
 import { cn } from '@/lib/utils';
 import { Clock, Pencil, Trash2, Calendar, CheckCircle2 } from 'lucide-react';
-import { SessionModal } from './SessionModal';
+
 import { useRouter } from 'next/navigation';
 import { EditSessionDialog } from './EditSessionDialog';
 import { deleteSession } from '@/app/actions';
@@ -114,12 +114,12 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
                             </span>
 
                             {/* Subtler Activity Dot */}
-                            {hasActivity && !isSelected && (
+                            {hasActivity && !isSelected && !isToday && (
                                 <div className="absolute bottom-1 w-1 h-1 rounded-full bg-emerald-500/50" />
                             )}
 
                             {isToday && !isSelected && (
-                                <div className="absolute top-2 right-1/2 translate-x-3 w-1 h-1 rounded-full bg-blue-400" />
+                                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-blue-400" />
                             )}
                         </button>
                     );

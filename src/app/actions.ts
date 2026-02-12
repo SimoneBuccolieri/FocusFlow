@@ -10,6 +10,7 @@ export async function saveSession(data: {
     title?: string;
     description?: string;
     privateNotes?: string;
+    checklist?: any[]; // Using any[] to match Prisma Json input, but strictly typed in frontend
 }) {
     const session = await getServerSession(authOptions);
 
@@ -35,6 +36,7 @@ export async function saveSession(data: {
             title: data.title,
             description: data.description,
             privateNotes: data.privateNotes,
+            checklist: data.checklist || [],
         },
     });
 

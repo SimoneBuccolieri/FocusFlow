@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+
 }
 
 datasource db {
@@ -67,6 +67,7 @@ model StudySession {
   title           String?
   description     String?
   privateNotes    String?
+  checklist       Json?
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

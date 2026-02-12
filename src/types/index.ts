@@ -4,6 +4,13 @@ export interface Session {
     duration: number; // Always in seconds
     title: string | null;
     description: string | null;
+    checklist?: ChecklistItem[] | null;
+}
+
+export interface ChecklistItem {
+    id: string;
+    text: string;
+    completed: boolean;
 }
 
 export interface ActivityData {
