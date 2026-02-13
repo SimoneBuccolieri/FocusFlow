@@ -3,13 +3,12 @@
 import { Play, Pause, RotateCcw, Coffee, Brain, BatteryCharging, Save, Sliders } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePomodoro } from '@/hooks/usePomodoro';
-import { motion } from 'framer-motion';
 
 type TimerProps = Omit<ReturnType<typeof usePomodoro>, 'stopAndSave'> & {
     stopAndSave: () => void | Promise<void>;
 };
 
-export function Timer({ timeLeft, isActive, mode, switchMode, toggleTimer, resetTimer, stopAndSave, customDuration }: TimerProps) {
+export function Timer({ timeLeft, isActive, mode, toggleTimer, resetTimer, stopAndSave, customDuration }: TimerProps) {
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;

@@ -32,6 +32,7 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
         const savedCustomDuration = localStorage.getItem('pomodoro-customDuration');
 
         if (savedCustomDuration) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCustomDuration(parseInt(savedCustomDuration));
         }
 
@@ -115,7 +116,7 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
         endTimeRef.current = null;
     }, [getTotalTime]);
 
-    const lastTickRef = useRef<number>(Date.now());
+    const lastTickRef = useRef<number>(0);
 
     useEffect(() => {
         if (!isActive || !endTimeRef.current) return;

@@ -17,6 +17,7 @@ export default function SignIn() {
 
     useEffect(() => {
         if (errorParam === "CredentialsSignin") {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setErrorMessage("Invalid email or password.");
         } else if (errorParam) {
             setErrorMessage("An error occurred. Please try again.");
@@ -141,7 +142,7 @@ export default function SignIn() {
                     </form>
 
                     <p className="text-center text-sm text-muted-foreground">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/auth/register" className="text-primary hover:underline">
                             Register
                         </Link>

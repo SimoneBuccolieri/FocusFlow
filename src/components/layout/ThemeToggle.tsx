@@ -1,21 +1,36 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
+import { useBackground, FocusMode } from '@/context/BackgroundContext';
+import { Moon, Sun, Trees } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function ThemeToggle() {
-    const { theme, setTheme } = useTheme()
+    const { focusMode, setFocusMode } = useBackground();
+
+    const options: { id: FocusMode; label: string; icon: React.ElementType }[] = [
+        { id: 'default', label: 'Dark', icon: Moon },
+        { id: 'light', label: 'Light', icon: Sun },
+        { id: 'tree', label: 'Tree', icon: Trees },
+    ];
 
     return (
-        <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="relative rounded-full p-2 bg-white/10 hover:bg-white/20 transition-colors border border-white/10"
-            aria-label="Toggle theme"
-        >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-yellow-500" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 top-2 left-2 text-blue-400" />
-            <span className="sr-only">Toggle theme</span>
-        </button>
-    )
+        <div className="fixed bottom-6 right-6 z-50 flex gap-1 p-1.5 glass rounded-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+            {options.map((opt) => (
+                <button
+                    key={opt.id}
+                    onClick={() => setFocusMode(opt.id)}
+                    className={cn(
+                        "px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2",
+                        focusMode === opt.id
+                            ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                            : "hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                    )}
+                    aria-label={`Switch to ${opt.label} mode`}
+                >
+                    <opt.icon size={16} />
+                    <span className="hidden sm:inline">{opt.label}</span>
+                </button>
+            ))}
+        </div>
+    );
 }

@@ -1,16 +1,24 @@
 'use client';
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LogOut, User } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
+import Image from "next/image";
+
 
 export function Navbar() {
     const { data: session } = useSession();
 
+    const pathname = usePathname();
+
+    if (pathname?.startsWith("/auth")) {
+        return null;
+    }
+
     return (
         <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-            <nav className="glass px-6 py-3 rounded-full flex items-center gap-8 animate-in fade-in slide-in-from-top-4 duration-700">
+            <nav className="glass px-6 py-3 rounded-full flex items-center gap-8">
                 <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -39,11 +47,14 @@ export function Navbar() {
                         <>
                             <Link href="/profile" className="flex items-center gap-3 pl-2 hover:opacity-80 transition-opacity">
                                 {session.user?.image ? (
-                                    <img
-                                        src={session.user.image}
-                                        alt={session.user.name || "User"}
-                                        className="w-9 h-9 rounded-full border-2 border-primary/20 ring-2 ring-primary/10"
-                                    />
+                                    <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-primary/20 ring-2 ring-primary/10">
+                                        <Image
+                                            src={session.user.image}
+                                            alt={session.user.name || "User"}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 ) : (
                                     <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary">
                                         <User size={16} />
@@ -51,7 +62,7 @@ export function Navbar() {
                                 )}
                             </Link>
 
-                            <ThemeToggle />
+
 
                             <button
                                 onClick={() => signOut()}

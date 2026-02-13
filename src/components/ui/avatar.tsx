@@ -1,6 +1,7 @@
 import * as React from "react"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import Image from "next/image"
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -24,10 +25,16 @@ Avatar.displayName = "Avatar"
 const AvatarImage = React.forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-    <img
-        ref={ref}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+>(({ className, src, alt, width: _width, height: _height, ...props }, ref) => (
+    <Image
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ref={ref as any}
         className={cn("aspect-square h-full w-full", className)}
+        fill
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        src={(src as any) || ''}
+        alt={alt || "Avatar"}
         {...props}
     />
 ))

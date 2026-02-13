@@ -2,54 +2,79 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { updateUserPreferences } from '@/app/actions';
+import { useTheme } from 'next-themes';
 
-type BackgroundMode = 'empty' | 'forest';
+export type BackgroundMode = 'empty' | 'forest';
+export type FocusMode = 'default' | 'light' | 'tree';
 
 interface BackgroundContextType {
     bgMode: BackgroundMode;
-    setBgMode: (mode: BackgroundMode) => void;
+    focusMode: FocusMode;
+    setFocusMode: (mode: FocusMode) => void;
 }
 
 const BackgroundContext = createContext<BackgroundContextType | undefined>(undefined);
 
-// Define props
 interface BackgroundProviderProps {
     children: React.ReactNode;
     initialMode?: BackgroundMode | null;
 }
 
 export function BackgroundProvider({ children, initialMode }: BackgroundProviderProps) {
-    // Initialize with DB value if present, else fallback to empty
+    const { setTheme } = useTheme();
     const [bgMode, setBgModeState] = useState<BackgroundMode>((initialMode as BackgroundMode) || 'empty');
+    const [focusMode, setFocusModeState] = useState<FocusMode>('default');
     const isMounted = useRef(false);
 
-    // Wrapper to update state AND server
-    const setBgMode = (mode: BackgroundMode) => {
-        setBgModeState(mode);
-        // Sync to DB
-        updateUserPreferences('backgroundMode', mode).catch(e => console.error("Failed to sync bg mode", e));
+    // Sync focusMode to theme and bgMode
+    const changeFocusMode = (mode: FocusMode) => {
+        setFocusModeState(mode);
+
+        const updatePrefs = (bgMode: BackgroundMode) => {
+            // Save to local storage for guests/persistence
+            localStorage.setItem('focus_flow_bg_mode', bgMode);
+
+            // Try to update DB if logged in (silently fail if not)
+            updateUserPreferences('backgroundMode', bgMode).catch(() => { });
+        };
+
+        if (mode === 'light') {
+            setTheme('light');
+            setBgModeState('empty');
+            updatePrefs('empty');
+        } else if (mode === 'tree') {
+            setTheme('dark');
+            setBgModeState('forest');
+            updatePrefs('forest');
+        } else {
+            // Default (Dark)
+            setTheme('dark');
+            setBgModeState('empty');
+            updatePrefs('empty');
+        }
     };
 
-    // Load preference from localStorage on mount IF no initialMode provided (fallback)
+    // Initialize state based on initial props or local storage
     useEffect(() => {
-        if (!initialMode) {
-            const savedMode = localStorage.getItem('focus_flow_bg_mode') as BackgroundMode;
-            if (savedMode) {
-                setBgModeState(savedMode);
-            }
-        }
-        isMounted.current = true;
-    }, [initialMode]);
+        if (!isMounted.current) {
+            const savedBg = (initialMode as BackgroundMode) || (localStorage.getItem('focus_flow_bg_mode') as BackgroundMode);
 
-    // Save preference when it changes (local + server)
-    useEffect(() => {
-        if (isMounted.current) {
-            localStorage.setItem('focus_flow_bg_mode', bgMode);
+            if (savedBg === 'forest') {
+                setFocusModeState('tree');
+                setBgModeState('forest'); // Fix: Actually set the background mode
+                setTheme('dark');
+            } else {
+                // If the user previously selected light mode, we might want to respect that too?
+                // But for now, let's just ensure bgMode is correct.
+                // If savedBg is 'empty', we check if theme is light? 
+                // Next-themes handles the theme part, we just need to match focusMode status.
+            }
+            isMounted.current = true;
         }
-    }, [bgMode]);
+    }, [initialMode, setTheme]);
 
     return (
-        <BackgroundContext.Provider value={{ bgMode, setBgMode }}>
+        <BackgroundContext.Provider value={{ bgMode, focusMode, setFocusMode: changeFocusMode }}>
             {children}
         </BackgroundContext.Provider>
     );

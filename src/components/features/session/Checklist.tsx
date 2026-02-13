@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ChecklistItem } from '@/types';
-import { Plus, X, ListTodo, Check } from 'lucide-react';
+import { X, ListTodo, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -2,17 +2,12 @@
 
 import { useCallback, useState } from 'react';
 import { saveSession } from '@/app/actions';
-import { usePomodoro, TimerMode } from '@/hooks/usePomodoro';
-import { useSession } from "next-auth/react";
+import { usePomodoro } from '@/hooks/usePomodoro';
 import { Timer } from "@/components/features/timer/Timer";
 import { ModeSelector } from "./ModeSelector";
 import { TaskEditor } from "./TaskEditor";
 import { SessionModal } from "./SessionModal";
-import { EditSessionDialog } from "./EditSessionDialog";
-import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog"; // Fixed import 
-import { Settings, Play, Pause, Square, Plus, MoreVertical, Edit2, Trash2 } from "lucide-react";
 import { ChecklistItem } from '@/types';
-import { cn } from '@/lib/utils';
 import { CustomDurationSlider } from './CustomDurationSlider';
 
 export function SessionManager() {
@@ -21,7 +16,7 @@ export function SessionManager() {
     const [sessionDescription, setSessionDescription] = useState('');
     const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
 
-    const handleTimerComplete = useCallback((durationSeconds?: number) => {
+    const handleTimerComplete = useCallback(() => {
         // Play notification sound?
         const audio = new Audio('/sounds/bell.mp3');
         audio.play().catch(e => console.log("Audio play failed", e));

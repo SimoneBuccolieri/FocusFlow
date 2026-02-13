@@ -22,6 +22,8 @@ export const metadata: Metadata = {
 
 import { Providers } from "@/components/layout/Providers";
 import { GlobalBackground } from "@/components/layout/GlobalBackground";
+import { Navbar } from "@/components/layout/Navbar";
+import { PageTransition } from "@/components/layout/PageTransition";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -33,7 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
-  let userPrefs = { theme: 'system', backgroundMode: 'empty' };
+  let userPrefs: { theme?: string; backgroundMode?: string } = { theme: 'system' };
 
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
@@ -50,7 +52,10 @@ export default async function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers initialTheme={userPrefs.theme} initialBgMode={userPrefs.backgroundMode}>
           <GlobalBackground />
-          {children}
+          <Navbar />
+          <PageTransition>
+            {children}
+          </PageTransition>
         </Providers>
       </body>
     </html>

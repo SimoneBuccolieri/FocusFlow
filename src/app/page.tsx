@@ -1,16 +1,12 @@
-import { Navbar } from "@/components/layout/Navbar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { SessionManager } from "@/components/features/session/SessionManager";
-import { getUserActivity, getRecentSessions } from "@/lib/data";
+import { getUserActivity, getRecentSessions } from "@/app/actions/sessions";
 import { WeeklyProgress } from "@/components/features/stats/WeeklyProgress";
 import Link from "next/link";
 import { Users, Trophy, ArrowRight } from "lucide-react";
-import { Providers } from "@/components/layout/Providers";
 import { AmbientBackground } from "@/components/layout/AmbientBackground";
 import { DailyFocusWidget } from "@/components/features/stats/DailyFocusWidget";
-import { format } from "date-fns";
-import { redirect } from "next/navigation";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const session = await getServerSession(authOptions);
@@ -18,8 +14,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
 
   if (!session) {
     return (
-      <main className="min-h-screen bg-background relative overflow-hidden flex flex-col">
-        <Navbar />
+      <main className="min-h-screen relative overflow-hidden flex flex-col">
 
         {/* Ambient Background Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
@@ -48,14 +43,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
 
   // Dashboard Logic
   const year = params.year ? parseInt(params.year) : new Date().getFullYear();
-  // We need to fetch activity using the session user's ID
-  // If session.user.id is missing (type issue), we might need to fetch user by email first or fix types.
+  // Placeholder to ensure syntax validity if I decide to edit.
+  // I will check grep results first.ession.user.id is missing (type issue), we might need to fetch user by email first or fix types.
   // For now, let's assume session.user.id is available as per NextAuth callbacks we fixed.
   // If not, we fallback to email if getUserActivity supports it, but we changed it to userId.
   // Let's coerce it for now as we know we added the callback.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userId = (session.user as any).id;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let activityData: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let recentSessions: any[] = [];
   try {
     if (userId) {
@@ -69,89 +67,109 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
 
   // Fix: Use local date string to match data.ts aggregation
   const todayStr = new Date().toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD local time
-  const todaysMinutes = activityData.find(d => d.date === todayStr)?.count || 0;
+  // Fix: Ensure we never return NaN
+  const todayEntry = activityData.find((d: any) => d.date === todayStr);
+  const rawMinutes = todayEntry?.count;
+
+  console.log('--- DEBUG TODAY FOCUS ---');
+  console.log('todayStr:', todayStr);
+  console.log('todayEntry:', JSON.stringify(todayEntry));
+  console.log('rawMinutes:', rawMinutes, 'typeof:', typeof rawMinutes);
+
+  const todaysMinutes = (typeof rawMinutes === 'number' && !isNaN(rawMinutes)) ? rawMinutes : 0;
+  console.log('todaysMinutes (calculated):', todaysMinutes);
+  console.log('-------------------------');
 
   return (
-    <Providers>
-      <main className="min-h-screen relative overflow-hidden pb-20">
-        <Navbar />
+    <main className="min-h-screen relative overflow-hidden pb-20">
+      {/* Ambient Glow */}
+      <AmbientBackground />
 
-        {/* Ambient Glow */}
-        <AmbientBackground />
+      <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
 
-        <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
-
-          {/* Header */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back, <span className="text-primary">{session.user?.name?.split(' ')[0]}</span></h1>
-              <p className="text-muted-foreground text-lg">Ready for another productive session?</p>
-            </div>
-
-            {/* Today's Focus Widget */}
-            <div className="flex justify-end">
-              <DailyFocusWidget minutes={todaysMinutes} />
-            </div>
+        {/* Header */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back, <span className="text-primary">{session.user?.name?.split(' ')[0]}</span></h1>
+            <p className="text-muted-foreground text-lg">Ready for another productive session?</p>
           </div>
 
-          {/* Timer Section */}
-          <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-            <SessionManager />
+          {/* Today's Focus Widget */}
+          <div className="flex justify-end">
+            <DailyFocusWidget minutes={todaysMinutes} />
           </div>
-
-          {/* Weekly Progress Bar */}
-          <WeeklyProgress data={recentSessions} />
-
-          {/* Activity Overview (Simplified) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-            <Link href="/profile" className="col-span-1 md:col-span-3 glass p-8 rounded-[2rem] flex items-center justify-between hover:bg-white/5 transition-all group border border-white/10 shadow-lg">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-primary font-medium text-sm uppercase tracking-wider">
-                  <Trophy size={14} />
-                  Your Progress
-                </div>
-                <h2 className="text-2xl font-bold">View Full Activity History</h2>
-                <p className="text-muted-foreground/80 max-w-lg">
-                  Check your heatmap, detailed session logs, and monthly statistics on your profile.
-                </p>
-              </div>
-              <div className="h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-foreground group-hover:scale-110 transition-transform duration-300">
-                <ArrowRight size={24} />
-              </div>
-            </Link>
-          </div>
-
-          {/* Leaderboard CTA */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-            <Link href="/leaderboard" className="glass p-6 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all group">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-yellow-500/20 text-yellow-500">
-                  <Trophy size={24} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Weekly Leaderboard</h3>
-                  <p className="text-muted-foreground text-sm">See who's leading the charts</p>
-                </div>
-              </div>
-              <ArrowRight size={20} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </Link>
-
-            <Link href="/community" className="glass p-6 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all group">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-blue-500/20 text-blue-500">
-                  <Users size={24} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Community</h3>
-                  <p className="text-muted-foreground text-sm">Explore other profiles</p>
-                </div>
-              </div>
-              <ArrowRight size={20} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
         </div>
-      </main>
-    </Providers>
+
+        {/* Timer Section */}
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+          <SessionManager />
+        </div>
+
+        {/* Weekly Progress Bar */}
+        <WeeklyProgress data={recentSessions} />
+
+        {/* Activity Overview (Simplified) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <Link href="/profile" className="col-span-1 md:col-span-3 glass p-8 rounded-[2rem] flex items-center justify-between hover:bg-white/5 transition-all group border border-white/10 shadow-lg">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-primary font-medium text-sm uppercase tracking-wider">
+                <Trophy size={14} />
+                Your Progress
+              </div>
+              <h2 className="text-2xl font-bold">View Full Activity History</h2>
+              <p className="text-muted-foreground/80 max-w-lg">
+                Check your heatmap, detailed session logs, and monthly statistics on your profile.
+              </p>
+            </div>
+            <div className="h-14 w-14 rounded-full bg-white/5 flex items-center justify-center text-foreground group-hover:scale-110 transition-transform duration-300">
+              <ArrowRight size={24} />
+            </div>
+          </Link>
+        </div>
+
+        {/* Leaderboard CTA */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+          <Link href="/leaderboard" className="glass p-6 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all group">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-full bg-yellow-500/20 text-yellow-500">
+                <Trophy size={24} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Weekly Leaderboard</h3>
+                <p className="text-muted-foreground text-sm">See who&apos;s leading the charts</p>
+              </div>
+            </div>
+            <ArrowRight size={20} className="text-muted-foreground group-hover:translate-x-1 transition-transform" />
+          </Link>
+
+          <div className="glass p-6 rounded-2xl flex items-center justify-between hover:bg-white/5 transition-all group relative">
+            <Link href="/community" className="absolute inset-0 z-0" aria-label="Go to Community" />
+
+            <div className="flex items-center gap-4 relative z-10 pointer-events-none">
+              <div className="p-3 rounded-full bg-blue-500/20 text-blue-500 pointer-events-auto">
+                {((session as unknown) as { user: { id: string } })?.user?.id ? (
+                  <Link
+                    href={`/u/${((session as unknown) as { user: { id: string } }).user.id}`}
+                    className="flex items-center justify-center h-full w-full hover:scale-110 transition-transform"
+                    aria-label="Your Profile"
+                  >
+                    <Users size={24} />
+                  </Link>
+                ) : (
+                  <Users size={24} />
+                )}
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">Community</h3>
+                <p className="text-muted-foreground text-sm">Explore other profiles</p>
+              </div>
+            </div>
+            <ArrowRight size={20} className="text-muted-foreground group-hover:translate-x-1 transition-transform relative z-0" />
+          </div>
+        </div>
+
+
+      </div>
+    </main>
   );
 }

@@ -27,7 +27,7 @@ export function DailyFocusWidget({ minutes }: DailyFocusWidgetProps) {
     return (
         <div className="flex items-center gap-4 group">
             <div className="text-right">
-                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Today's Focus</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Today&apos;s Focus</div>
                 <div className={`text-4xl font-bold transition-colors duration-500 ${getColorClass()}`}>
                     {minutes} <span className="text-lg font-normal opacity-60">min</span>
                 </div>

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Target, Quote, Coffee, CheckSquare } from 'lucide-react';
+import { Sparkles, Target, Quote, Coffee } from 'lucide-react';
 import { Checklist } from './Checklist';
 import { ChecklistItem } from '@/types';
 import { TimerMode } from '@/hooks/usePomodoro';

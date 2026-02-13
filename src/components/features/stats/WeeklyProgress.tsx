@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, subDays, isSameDay, parseISO, startOfDay } from 'date-fns';
-import { it } from 'date-fns/locale';
+
 
 import { cn } from '@/lib/utils';
 import { Clock, Pencil, Trash2, Calendar, CheckCircle2 } from 'lucide-react';
@@ -49,7 +49,6 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
         setSessionToDelete(sessionId);
     };
 
-    // Generate last 7 days as stable objects
     const days = useMemo(() => {
         return Array.from({ length: 7 }, (_, i) => {
             const date = subDays(today, i);

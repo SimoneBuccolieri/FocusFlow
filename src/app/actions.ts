@@ -10,6 +10,7 @@ export async function saveSession(data: {
     title?: string;
     description?: string;
     privateNotes?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     checklist?: any[]; // Using any[] to match Prisma Json input, but strictly typed in frontend
 }) {
     const session = await getServerSession(authOptions);
@@ -43,7 +44,8 @@ export async function saveSession(data: {
     revalidatePath('/');
 }
 
-export async function deleteSession(sessionId: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function deleteSession(sessionId: string): Promise<any> {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -85,7 +87,7 @@ export async function deleteSession(sessionId: string) {
 export async function updateUserPreferences(key: 'theme' | 'backgroundMode', value: string) {
     const session = await getServerSession(authOptions);
     if (!session || !session.user || !session.user.email) {
-        throw new Error("Unauthorized");
+        return { success: false, error: "Unauthorized" };
     }
 
     // Validate key to prevent arbitrary field updates

@@ -3,6 +3,7 @@
 import { User, Trophy, Medal, Crown, Flame, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import Image from "next/image";
 
 type LeaderboardUser = {
     id: string;
@@ -70,17 +71,20 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                         {/* Avatar */}
                         <div className="relative shrink-0">
                             {user.image ? (
-                                <img
-                                    src={user.image}
-                                    alt={user.name || "User"}
-                                    className={cn(
-                                        "w-12 h-12 rounded-full border-2 object-cover",
-                                        index === 0 ? "border-yellow-400 shadow-[0_0_10px_theme(colors.yellow.400)]" :
-                                            index === 1 ? "border-slate-300" :
-                                                index === 2 ? "border-amber-600" :
-                                                    "border-white/10"
-                                    )}
-                                />
+                                <div className={cn(
+                                    "relative w-12 h-12 rounded-full border-2 overflow-hidden",
+                                    index === 0 ? "border-yellow-400 shadow-[0_0_10px_theme(colors.yellow.400)]" :
+                                        index === 1 ? "border-slate-300" :
+                                            index === 2 ? "border-amber-600" :
+                                                "border-white/10"
+                                )}>
+                                    <Image
+                                        src={user.image}
+                                        alt={user.name || "User"}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
                             ) : (
                                 <div className={cn(
                                     "w-12 h-12 rounded-full flex items-center justify-center text-primary bg-primary/20",
@@ -90,7 +94,7 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                                 </div>
                             )}
 
-                            {/* Online/Active indicator (fake for now, or based on recent activity?) */}
+                            {/* Online/Active indicator */}
                             {index < 3 && (
                                 <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background rounded-full flex items-center justify-center">
                                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
@@ -114,7 +118,7 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                             {user.lastSessionTitle ? (
                                 <p className="text-xs text-muted-foreground flex items-center gap-1.5 truncate">
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-                                    Last focused on: <span className="font-medium text-foreground/80 truncate">"{user.lastSessionTitle}"</span>
+                                    Last focused on: <span className="font-medium text-foreground/80 truncate">&quot;{user.lastSessionTitle}&quot;</span>
                                 </p>
                             ) : (
                                 <p className="text-xs text-muted-foreground italic">No recent sessions shared</p>

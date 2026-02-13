@@ -1,13 +1,10 @@
-
-import { getUserActivity } from "@/lib/data";
+import { getUserActivity } from "@/app/actions/sessions";
 import { prisma } from "@/lib/prisma";
 import { Heatmap } from "@/components/features/stats/Heatmap";
-import { WeeklyProgress } from "@/components/features/stats/WeeklyProgress";
 import { ClientYearSelector } from "@/components/common/ClientYearSelector";
-import { Navbar } from "@/components/layout/Navbar";
 import { notFound } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Need to make sure we have this or use fallback
-import { CalendarDays, Clock, Trophy } from "lucide-react";
+import { Clock, Trophy } from "lucide-react";
+import Image from "next/image";
 
 // Quick Avatar component since we might not have shadcn/ui generic one verified
 function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?: string | null, size?: "sm" | "md" | "lg" }) {
@@ -18,9 +15,9 @@ function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?
     };
 
     return (
-        <div className={`rounded-full overflow-hidden bg-primary/20 flex items-center justify-center border-2 border-white/10 ${sizeClasses[size]}`}>
+        <div className={`rounded-full overflow-hidden bg-primary/20 flex items-center justify-center border-2 border-white/10 ${sizeClasses[size]} relative`}>
             {image ? (
-                <img src={image} alt={name || "User"} className="w-full h-full object-cover" />
+                <Image src={image} alt={name || "User"} fill className="object-cover" />
             ) : (
                 <span className="font-bold text-primary">{name?.[0]?.toUpperCase() || "?"}</span>
             )}
@@ -62,7 +59,6 @@ export default async function UserProfile({ params, searchParams }: { params: Pr
 
     return (
         <main className="min-h-screen relative selection:bg-primary/30 text-foreground pb-20">
-            <Navbar />
 
             {/* Background Effects */}
             <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
@@ -71,7 +67,7 @@ export default async function UserProfile({ params, searchParams }: { params: Pr
             <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
 
                 {/* Profile Header */}
-                <div className="glass p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 md:gap-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="glass p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 md:gap-12">
                     <UserAvatar image={user.image} name={user.name} size="lg" />
 
                     <div className="text-center md:text-left space-y-4 flex-1">

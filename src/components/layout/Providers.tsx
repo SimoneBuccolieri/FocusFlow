@@ -2,7 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./ThemeProvider";
-import { BackgroundProvider } from "@/context/BackgroundContext";
+import { BackgroundProvider, BackgroundMode } from "@/context/BackgroundContext";
 
 import { ThemeSync } from "./ThemeSync";
 
@@ -15,17 +15,17 @@ interface ProvidersProps {
 export function Providers({ children, initialTheme, initialBgMode }: ProvidersProps) {
     return (
         <SessionProvider>
-            <BackgroundProvider initialMode={initialBgMode as any}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
-                    disableTransitionOnChange
-                >
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+            >
+                <BackgroundProvider initialMode={initialBgMode as BackgroundMode}>
                     <ThemeSync initialTheme={initialTheme} />
                     {children}
-                </ThemeProvider>
-            </BackgroundProvider>
+                </BackgroundProvider>
+            </ThemeProvider>
         </SessionProvider>
     );
 }
