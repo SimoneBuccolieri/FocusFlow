@@ -7,6 +7,8 @@ import { WeeklyProgress } from "@/components/WeeklyProgress";
 import Link from "next/link";
 import { Users, Trophy, ArrowRight } from "lucide-react";
 import { Providers } from "@/components/Providers";
+import { AmbientBackground } from "@/components/AmbientBackground";
+import { DailyFocusWidget } from "@/components/dashboard/DailyFocusWidget";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const session = await getServerSession(authOptions);
@@ -63,17 +65,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
   }
 
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Fix: Use local date string to match data.ts aggregation
+  const todayStr = new Date().toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD local time
   const todaysMinutes = activityData.find(d => d.date === todayStr)?.count || 0;
 
   return (
     <Providers>
-      <main className="min-h-screen bg-background relative overflow-hidden pb-20">
+      <main className="min-h-screen relative overflow-hidden pb-20">
         <Navbar />
 
         {/* Ambient Glow */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-[20%] right-[-10%] w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none" />
+        <AmbientBackground />
 
         <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
 
@@ -86,40 +88,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
 
             {/* Today's Focus Widget */}
             <div className="flex justify-end">
-              <div className="flex items-center gap-4 group">
-                <div className="text-right">
-                  <div className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Today's Focus</div>
-                  <div className={`text-4xl font-bold transition-colors duration-500 ${todaysMinutes === 0 ? "text-muted-foreground/50" :
-                      todaysMinutes < 30 ? "text-emerald-600/70" :
-                        todaysMinutes < 60 ? "text-emerald-500" :
-                          todaysMinutes < 120 ? "text-emerald-400" :
-                            "text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]"
-                    }`}>
-                    {todaysMinutes} <span className="text-lg font-normal opacity-60">min</span>
-                  </div>
-                </div>
-
-                <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all duration-500 ${todaysMinutes === 0 ? "bg-muted/50 text-muted-foreground/30" :
-                    todaysMinutes < 30 ? "bg-emerald-900/20 text-emerald-700" :
-                      todaysMinutes < 60 ? "bg-emerald-900/40 text-emerald-500" :
-                        todaysMinutes < 120 ? "bg-emerald-600/20 text-emerald-400" :
-                          "bg-emerald-400/20 text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.3)]"
-                  }`}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill={todaysMinutes > 0 ? "currentColor" : "none"}
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={`transition-all duration-500 ${todaysMinutes >= 120 ? "animate-pulse" : ""}`}
-                  >
-                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.6-3.3a1 1 0 0 1 .4-.8c.7-.6 1.9-1.3 2.5-1.9a2.5 2.5 0 0 1 .5 1z" />
-                  </svg>
-                </div>
-              </div>
+              <DailyFocusWidget minutes={todaysMinutes} />
             </div>
           </div>
 

@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      target: deps
+    image: focus-flow-dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    command: sh -c "npx prisma generate && npm run dev"
+    ports:
+      - "3000:3000"
+    restart: always
+
+  # Re-declare db to ensure it uses the same configuration/volume as the main file
+  db:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: focusflow
+    ports:
+      - "5432:5432"

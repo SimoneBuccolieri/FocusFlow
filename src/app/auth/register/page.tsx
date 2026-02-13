@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { ArrowLeft, User, Lock, Mail, Loader2, AlertCircle } from "lucide-react";
+import { AmbientBackground } from "@/components/AmbientBackground";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -31,7 +32,19 @@ export default function RegisterPage() {
             });
 
             if (res.ok) {
-                router.push("/auth/signin?registered=true");
+                // Auto-login after successful registration
+                const signInRes = await signIn("credentials", {
+                    email: data.email,
+                    password: data.password,
+                    redirect: false,
+                });
+
+                if (signInRes?.ok) {
+                    router.push("/");
+                    router.refresh();
+                } else {
+                    router.push("/auth/signin?registered=true");
+                }
             } else {
                 const errorData = await res.json();
                 setError(errorData.message || "Registration failed");
@@ -44,10 +57,9 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
             {/* Ambient Background Glow */}
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <AmbientBackground />
 
             <div className="w-full max-w-md p-8 glass rounded-3xl relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <Link href="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors">

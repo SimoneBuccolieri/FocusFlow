@@ -49,6 +49,10 @@ model User {
   
   // App specific
   studySessions StudySession[]
+  
+  // Design Preferences
+  theme          String?   @default("system")
+  backgroundMode String?   @default("empty")
 }
 
 model VerificationToken {

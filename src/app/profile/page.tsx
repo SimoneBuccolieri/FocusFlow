@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Heatmap } from "@/components/Heatmap";
 import { ClientYearSelector } from "@/components/ClientYearSelector";
 import { Navbar } from "@/components/Navbar";
+import { AmbientBackground } from "@/components/AmbientBackground";
 import { Clock, Trophy, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { Providers } from "@/components/Providers";
@@ -18,7 +19,7 @@ function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?
     };
 
     return (
-        <div className={`rounded-full overflow-hidden bg-primary/20 flex items-center justify-center border-2 border-white/10 ${sizeClasses[size]}`}>
+        <div className={`rounded-full overflow-hidden bg-primary/20 flex items-center justify-center border-2 border-border/50 ${sizeClasses[size]}`}>
             {image ? (
                 <img src={image} alt={name || "User"} className="w-full h-full object-cover" />
             ) : (
@@ -47,12 +48,11 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
 
     return (
         <Providers>
-            <main className="min-h-screen bg-background relative selection:bg-primary/30 text-foreground pb-20">
+            <main className="min-h-screen relative selection:bg-primary/30 text-foreground pb-20 overflow-x-hidden">
                 <Navbar />
 
                 {/* Background Effects */}
-                <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
-                <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none" />
+                <AmbientBackground />
 
                 <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
 
@@ -87,18 +87,20 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-center">
-                            <div className="text-sm text-muted-foreground mb-2">Focus Year</div>
-                            <ClientYearSelector currentYear={year} />
-                        </div>
+
                     </div>
 
                     {/* Heatmap Section */}
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-semibold">Your Activity Log</h2>
-                            <div className="text-sm text-muted-foreground">
-                                Click on a day to edit
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div>
+                                <h2 className="text-2xl font-semibold">Your Activity Log</h2>
+                                <div className="text-sm text-muted-foreground">
+                                    Click on a day to edit
+                                </div>
+                            </div>
+                            <div className="flex items-center bg-white/5 px-2 py-1 rounded-lg border border-white/5">
+                                <ClientYearSelector currentYear={year} />
                             </div>
                         </div>
                         <Heatmap data={activityData} year={year} isEditable={true} />

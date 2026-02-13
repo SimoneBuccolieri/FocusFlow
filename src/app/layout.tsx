@@ -18,16 +18,35 @@ export const metadata: Metadata = {
 };
 
 import { Providers } from "@/components/Providers";
+import { GlobalBackground } from "@/components/GlobalBackground";
 
-export default function RootLayout({
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  let userPrefs = { theme: 'system', backgroundMode: 'empty' };
+
+  if (session?.user?.id) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { theme: true, backgroundMode: true }
+    });
+    if (user) {
+      userPrefs = { theme: user.theme || 'system', backgroundMode: user.backgroundMode || 'empty' };
+    }
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>
+        <Providers initialTheme={userPrefs.theme} initialBgMode={userPrefs.backgroundMode}>
+          <GlobalBackground />
           {children}
         </Providers>
       </body>

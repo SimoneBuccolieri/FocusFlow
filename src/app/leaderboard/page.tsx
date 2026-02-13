@@ -14,7 +14,7 @@ export default async function LeaderboardPage() {
     }
 
     return (
-        <main className="min-h-screen bg-background relative selection:bg-primary/30 text-foreground pb-20">
+        <main className="min-h-screen relative selection:bg-primary/30 text-foreground pb-20">
             <Navbar />
 
             {/* Ambient Effects */}
@@ -30,7 +30,8 @@ export default async function LeaderboardPage() {
                     </p>
                 </div>
 
-                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 glass p-8 rounded-[2rem] border border-black/5 dark:border-white/10 relative overflow-hidden shadow-xl dark:shadow-none bg-white/60 dark:bg-black/20">
+                    <div className="absolute inset-0 bg-white/40 dark:bg-black/20 backdrop-blur-md -z-10" />
                     <Leaderboard users={leaderboard} />
                 </div>
             </div>

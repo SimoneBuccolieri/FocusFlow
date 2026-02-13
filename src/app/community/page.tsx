@@ -24,7 +24,7 @@ export default async function CommunityPage() {
     const users = await getAllUsers();
 
     return (
-        <main className="min-h-screen bg-background relative selection:bg-primary/30 text-foreground pb-20">
+        <main className="min-h-screen relative selection:bg-primary/30 text-foreground pb-20">
             <Navbar />
 
             {/* Ambient Effects */}

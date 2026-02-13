@@ -1,31 +1,54 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, User, Lock, Mail } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowLeft, User, Lock, Mail, AlertCircle } from "lucide-react";
+import { AmbientBackground } from "@/components/AmbientBackground";
 
 export default function SignIn() {
+    const searchParams = useSearchParams();
+    const errorParam = searchParams.get("error");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        if (errorParam === "CredentialsSignin") {
+            setErrorMessage("Invalid email or password.");
+        } else if (errorParam) {
+            setErrorMessage("An error occurred. Please try again.");
+        }
+    }, [errorParam]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        await signIn("credentials", {
+        setErrorMessage(""); // Clear previous errors
+
+        const res = await signIn("credentials", {
             email,
             password,
             callbackUrl: "/",
+            redirect: false, // Prevent automatic redirect to handle errors locally
         });
-        setLoading(false);
+
+        if (res?.error) {
+            setErrorMessage("Invalid email or password.");
+            setLoading(false);
+        } else if (res?.ok) {
+            window.location.href = "/";
+        } else {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
             {/* Ambient Background Glow */}
-            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <AmbientBackground />
 
             <div className="w-full max-w-md p-8 glass rounded-3xl relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <Link href="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors">
@@ -76,6 +99,12 @@ export default function SignIn() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {errorMessage && (
+                            <div className="p-3 rounded-lg bg-red-500/10 text-red-500 text-sm text-center font-medium border border-red-500/20 flex items-center justify-center gap-2">
+                                <AlertCircle className="w-4 h-4" />
+                                {errorMessage}
+                            </div>
+                        )}
                         <div className="space-y-2">
                             <div className="relative">
                                 <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />

@@ -80,3 +80,28 @@ export async function deleteSession(sessionId: string) {
     revalidatePath('/');
     revalidatePath('/profile'); // Revalidate profile as well just in case
 }
+
+// Update user preferences (theme/background)
+export async function updateUserPreferences(key: 'theme' | 'backgroundMode', value: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.email) {
+        throw new Error("Unauthorized");
+    }
+
+    // Validate key to prevent arbitrary field updates
+    if (key !== 'theme' && key !== 'backgroundMode') {
+        throw new Error("Invalid preference key");
+    }
+
+    try {
+        await prisma.user.update({
+            where: { email: session.user.email },
+            data: { [key]: value },
+        });
+        revalidatePath('/'); // Revalidate to reflect changes if needed server-side
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update preferences:", error);
+        return { success: false, error: "Failed to update preferences" };
+    }
+}

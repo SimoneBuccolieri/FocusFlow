@@ -61,7 +61,7 @@ export default async function UserProfile({ params, searchParams }: { params: Pr
     const activeDays = activityData.filter(d => d.count > 0).length;
 
     return (
-        <main className="min-h-screen bg-background relative selection:bg-primary/30 text-foreground pb-20">
+        <main className="min-h-screen relative selection:bg-primary/30 text-foreground pb-20">
             <Navbar />
 
             {/* Background Effects */}
@@ -95,16 +95,16 @@ export default async function UserProfile({ params, searchParams }: { params: Pr
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center">
-                        <div className="text-sm text-muted-foreground mb-2">Focus Year</div>
-                        <ClientYearSelector currentYear={year} />
-                    </div>
+
                 </div>
 
                 {/* Heatmap Section */}
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <h2 className="text-2xl font-semibold">Activity Graph</h2>
+                        <div className="flex items-center bg-white/5 px-2 py-1 rounded-lg border border-white/5">
+                            <ClientYearSelector currentYear={year} />
+                        </div>
                     </div>
                     {/* Read-only Heatmap */}
                     <Heatmap data={activityData} year={year} isEditable={false} />

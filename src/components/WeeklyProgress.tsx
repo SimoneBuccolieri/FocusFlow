@@ -169,7 +169,9 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
                                             )}
                                             <div className="flex items-center gap-2 mt-3 text-xs font-medium text-muted-foreground/60 uppercase tracking-wider">
                                                 <Clock size={12} />
-                                                {new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                <span suppressHydrationWarning>
+                                                    {new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
                                                 <span className="w-1 h-1 rounded-full bg-white/20" />
                                                 {Math.round(session.duration / 60)} min
                                             </div>
