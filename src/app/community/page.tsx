@@ -1,5 +1,5 @@
 
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 
 export const dynamic = "force-dynamic";
 

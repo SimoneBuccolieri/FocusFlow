@@ -6,9 +6,9 @@ import { format, eachDayOfInterval, startOfYear, endOfYear, startOfWeek, endOfWe
 import { it } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, AlignLeft, Pencil, Trash2, Loader2 } from 'lucide-react';
-import { deleteSession } from '@/app/actions/sessions';
-import { ConfirmDeleteDialog } from '@/components/ConfirmDeleteDialog';
-import { EditSessionDialog } from '@/components/EditSessionDialog';
+import { deleteSession } from '@/app/actions';
+import { ConfirmDeleteDialog } from '@/components/common/ConfirmDeleteDialog';
+import { EditSessionDialog } from '@/components/features/session/EditSessionDialog';
 import { useRouter } from 'next/navigation';
 import { ActivityData, Session } from '@/types';
 

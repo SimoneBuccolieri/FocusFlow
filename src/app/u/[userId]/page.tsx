@@ -1,10 +1,10 @@
 
 import { getUserActivity } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
-import { Heatmap } from "@/components/Heatmap";
-import { WeeklyProgress } from "@/components/WeeklyProgress";
-import { ClientYearSelector } from "@/components/ClientYearSelector";
-import { Navbar } from "@/components/Navbar";
+import { Heatmap } from "@/components/features/stats/Heatmap";
+import { WeeklyProgress } from "@/components/features/stats/WeeklyProgress";
+import { ClientYearSelector } from "@/components/common/ClientYearSelector";
+import { Navbar } from "@/components/layout/Navbar";
 import { notFound } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Need to make sure we have this or use fallback
 import { CalendarDays, Clock, Trophy } from "lucide-react";

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Target, Quote, Coffee, CheckSquare } from 'lucide-react';
-import { Checklist } from '@/components/Checklist';
+import { Checklist } from './Checklist';
 import { ChecklistItem } from '@/types';
 import { TimerMode } from '@/hooks/usePomodoro';
 

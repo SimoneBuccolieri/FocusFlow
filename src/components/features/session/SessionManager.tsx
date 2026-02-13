@@ -2,14 +2,18 @@
 
 import { useCallback, useState } from 'react';
 import { saveSession } from '@/app/actions';
-import { Timer } from './Timer';
 import { usePomodoro, TimerMode } from '@/hooks/usePomodoro';
-import { SessionModal } from './SessionModal';
+import { useSession } from "next-auth/react";
+import { Timer } from "@/components/features/timer/Timer";
+import { ModeSelector } from "./ModeSelector";
+import { TaskEditor } from "./TaskEditor";
+import { SessionModal } from "./SessionModal";
+import { EditSessionDialog } from "./EditSessionDialog";
+import { ConfirmDeleteDialog } from "@/components/common/ConfirmDeleteDialog"; // Fixed import 
+import { Settings, Play, Pause, Square, Plus, MoreVertical, Edit2, Trash2 } from "lucide-react";
 import { ChecklistItem } from '@/types';
-import { ModeSelector } from './session/ModeSelector';
-import { TaskEditor } from './session/TaskEditor';
-import { CustomDurationSlider } from './session/CustomDurationSlider';
 import { cn } from '@/lib/utils';
+import { CustomDurationSlider } from './CustomDurationSlider';
 
 export function SessionManager() {
     const [isModalOpen, setIsModalOpen] = useState(false);

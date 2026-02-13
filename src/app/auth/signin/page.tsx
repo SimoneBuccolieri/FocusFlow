@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, User, Lock, Mail, AlertCircle } from "lucide-react";
-import { AmbientBackground } from "@/components/AmbientBackground";
+import { AmbientBackground } from "@/components/layout/AmbientBackground";
 
 export default function SignIn() {
     const searchParams = useSearchParams();

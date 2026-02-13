@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   },
 };
 
-import { Providers } from "@/components/Providers";
-import { GlobalBackground } from "@/components/GlobalBackground";
+import { Providers } from "@/components/layout/Providers";
+import { GlobalBackground } from "@/components/layout/GlobalBackground";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

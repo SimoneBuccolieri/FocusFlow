@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils';
 import { Clock, Pencil, Trash2, Calendar, CheckCircle2 } from 'lucide-react';
 
 import { useRouter } from 'next/navigation';
-import { EditSessionDialog } from './EditSessionDialog';
+import { EditSessionDialog } from '@/components/features/session/EditSessionDialog';
 import { deleteSession } from '@/app/actions';
-import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
+import { ConfirmDeleteDialog } from '@/components/common/ConfirmDeleteDialog';
 import { Session } from '@/types';
 
 interface WeeklyProgressProps {

@@ -3,13 +3,13 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { getUserActivity } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
-import { Heatmap } from "@/components/Heatmap";
-import { ClientYearSelector } from "@/components/ClientYearSelector";
-import { Navbar } from "@/components/Navbar";
-import { AmbientBackground } from "@/components/AmbientBackground";
+import { Heatmap } from "@/components/features/stats/Heatmap";
+import { ClientYearSelector } from "@/components/common/ClientYearSelector";
+import { Navbar } from "@/components/layout/Navbar";
+import { AmbientBackground } from "@/components/layout/AmbientBackground";
 import { Clock, Trophy, Settings, User } from "lucide-react";
 import Link from "next/link";
-import { Providers } from "@/components/Providers";
+import { Providers } from "@/components/layout/Providers";
 
 function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?: string | null, size?: "sm" | "md" | "lg" }) {
     const sizeClasses = {

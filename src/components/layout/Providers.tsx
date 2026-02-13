@@ -1,10 +1,10 @@
 'use client';
 
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "./ThemeProvider";
 import { BackgroundProvider } from "@/context/BackgroundContext";
 
-import { ThemeSync } from "@/components/ThemeSync";
+import { ThemeSync } from "./ThemeSync";
 
 interface ProvidersProps {
     children: React.ReactNode;

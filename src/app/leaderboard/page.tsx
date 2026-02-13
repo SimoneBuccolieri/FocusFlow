@@ -1,9 +1,9 @@
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 
 export const dynamic = "force-dynamic";
 
 import { getLeaderboard } from "@/lib/data";
-import { Leaderboard } from "@/components/Leaderboard";
+import { Leaderboard } from "@/components/features/leaderboard/Leaderboard";
 
 export default async function LeaderboardPage() {
     let leaderboard: any[] = [];

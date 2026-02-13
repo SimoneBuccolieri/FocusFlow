@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { ArrowLeft, User, Lock, Mail, Loader2, AlertCircle } from "lucide-react";
-import { AmbientBackground } from "@/components/AmbientBackground";
+import { AmbientBackground } from "@/components/layout/AmbientBackground";
 
 export default function RegisterPage() {
     const router = useRouter();

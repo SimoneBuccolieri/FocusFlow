@@ -1,14 +1,16 @@
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { SessionManager } from "@/components/SessionManager";
+import { SessionManager } from "@/components/features/session/SessionManager";
 import { getUserActivity, getRecentSessions } from "@/lib/data";
-import { WeeklyProgress } from "@/components/WeeklyProgress";
+import { WeeklyProgress } from "@/components/features/stats/WeeklyProgress";
 import Link from "next/link";
 import { Users, Trophy, ArrowRight } from "lucide-react";
-import { Providers } from "@/components/Providers";
-import { AmbientBackground } from "@/components/AmbientBackground";
-import { DailyFocusWidget } from "@/components/dashboard/DailyFocusWidget";
+import { Providers } from "@/components/layout/Providers";
+import { AmbientBackground } from "@/components/layout/AmbientBackground";
+import { DailyFocusWidget } from "@/components/features/stats/DailyFocusWidget";
+import { format } from "date-fns";
+import { redirect } from "next/navigation";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const session = await getServerSession(authOptions);
