@@ -50,16 +50,16 @@ COPY --from=builder /app/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
+# Install Prisma CLI for migrations
+RUN npm install -g prisma@6.0.0
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Install Prisma CLI for migrations
-RUN npm install -g prisma@6.0.0
-
 # Copy Prisma schema and migrations if needed for runtime
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 # Copy the database file if it exists, though typically this should be volume mounted
 # But for first run, we might need to handle migrations or generation
