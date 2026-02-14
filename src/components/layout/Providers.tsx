@@ -20,6 +20,7 @@ export function Providers({ children, initialTheme, initialBgMode }: ProvidersPr
                 defaultTheme="dark"
                 enableSystem
                 disableTransitionOnChange
+                themes={['light', 'dark', 'forest']}
             >
                 <BackgroundProvider initialMode={initialBgMode as BackgroundMode}>
                     <ThemeSync initialTheme={initialTheme} />

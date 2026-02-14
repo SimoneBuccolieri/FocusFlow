@@ -28,7 +28,7 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
             case 0: return <Crown size={24} className="text-yellow-400 fill-yellow-400/20" />;
             case 1: return <Medal size={24} className="text-slate-300 fill-slate-300/20" />;
             case 2: return <Medal size={24} className="text-amber-600 fill-amber-600/20" />;
-            default: return <span className="font-bold text-lg text-muted-foreground w-6 text-center">{index + 1}</span>;
+            default: return <span className="font-bold text-lg text-muted-foreground dark:text-slate-400 w-6 text-center">{index + 1}</span>;
         }
     };
 
@@ -68,8 +68,8 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                             {getRankIcon(index)}
                         </div>
 
-                        {/* Avatar */}
-                        <div className="relative shrink-0">
+                        {/* Avatar - Hidden on mobile, block on md+ */}
+                        <div className="relative shrink-0 hidden md:block w-12 h-12">
                             {user.image ? (
                                 <div className={cn(
                                     "relative w-12 h-12 rounded-full border-2 overflow-hidden",
@@ -111,17 +111,17 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                                 )}>
                                     {user.name || "Anonymous User"}
                                 </h4>
-                                {index === 0 && <span className="text-[10px] uppercase font-bold bg-yellow-500/20 text-yellow-600 px-1.5 py-0.5 rounded">Champion</span>}
+                                {index === 0 && <span className="absolute top-2 right-2 md:static text-[8px] md:text-[10px] uppercase font-bold bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-1 py-0 md:px-1.5 md:py-0.5 rounded">Champion</span>}
                             </div>
 
                             {/* Last Activity / Status */}
                             {user.lastSessionTitle ? (
-                                <p className="text-xs text-muted-foreground flex items-center gap-1.5 truncate">
+                                <p className="hidden md:flex text-xs text-muted-foreground items-center gap-1.5 truncate">
                                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-                                    Last focused on: <span className="font-medium text-foreground/80 truncate">&quot;{user.lastSessionTitle}&quot;</span>
+                                    Last: <span className="font-medium text-foreground/80 truncate">&quot;{user.lastSessionTitle}&quot;</span>
                                 </p>
                             ) : (
-                                <p className="text-xs text-muted-foreground italic">No recent sessions shared</p>
+                                <p className="hidden md:block text-xs text-muted-foreground italic">No recent sessions</p>
                             )}
                         </div>
 
@@ -135,11 +135,11 @@ export function Leaderboard({ users }: { users: LeaderboardUser[] }) {
                                 </div>
                             </div>
 
-                            <div className="bg-background/40 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/5 min-w-[100px]">
-                                <div className="text-xs text-muted-foreground mb-0.5 text-center uppercase tracking-wider font-medium">Time</div>
-                                <div className="font-bold text-xl flex items-center justify-center gap-1.5">
-                                    <Clock size={16} className="text-primary" />
-                                    {Math.floor(user.totalMinutes / 60)}<span className="text-sm font-normal text-muted-foreground">h</span> {user.totalMinutes % 60}<span className="text-sm font-normal text-muted-foreground">m</span>
+                            <div className="md:bg-background/40 md:backdrop-blur-sm px-0 md:px-4 py-0 md:py-2 rounded-xl md:border md:border-white/5 min-w-[60px] md:min-w-[100px]">
+                                <div className="hidden md:block text-[10px] md:text-xs text-muted-foreground mb-0.5 text-center uppercase tracking-wider font-medium">Time</div>
+                                <div className="font-bold text-lg md:text-xl flex items-center justify-center gap-1">
+                                    <Clock size={14} className="text-primary md:w-4 md:h-4" />
+                                    {Math.floor(user.totalMinutes / 60)}<span className="text-xs md:text-sm font-normal text-muted-foreground">h</span> {user.totalMinutes % 60}<span className="text-xs md:text-sm font-normal text-muted-foreground">m</span>
                                 </div>
                             </div>
                         </div>

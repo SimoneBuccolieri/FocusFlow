@@ -60,8 +60,8 @@ export default function SignIn() {
                     <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground mb-4 shadow-lg shadow-primary/25">
                         <User size={24} />
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight">FocusFlow Login</h1>
-                    <p className="text-muted-foreground text-sm">Welcome back, builder.</p>
+                    <h1 className="text-2xl font-bold tracking-tight [.forest_&]:text-white">FocusFlow Login</h1>
+                    <p className="text-muted-foreground text-sm [.forest_&]:text-white/80">Welcome back, builder.</p>
                 </div>
 
                 <div className="space-y-4">
@@ -90,13 +90,10 @@ export default function SignIn() {
                         Sign in with Google
                     </button>
 
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/10" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                        </div>
+                    <div className="flex items-center gap-4">
+                        <div className="h-px bg-white/10 flex-1" />
+                        <span className="text-xs uppercase text-muted-foreground [.forest_&]:text-white/60">Or continue with</span>
+                        <div className="h-px bg-white/10 flex-1" />
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">

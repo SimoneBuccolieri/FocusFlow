@@ -105,8 +105,9 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
                                 />
                             )}
 
-                            <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-0.5 transition-opacity", isSelected ? "opacity-100" : "opacity-50")}>
-                                {day.dayName}
+                            <span className="text-[10px] font-bold uppercase tracking-widest mb-0.5 transition-opacity opacity-50 [.group:hover_&]:opacity-100">
+                                <span className="md:hidden">{day.dayName.charAt(0)}</span>
+                                <span className="hidden md:inline">{day.dayName}</span>
                             </span>
                             <span className={cn("text-lg font-bold leading-none transition-transform", isSelected ? "scale-110" : "scale-100")}>
                                 {day.dayNum}
@@ -138,7 +139,7 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
                 </div>
 
                 {selectedSessions.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-40 text-muted-foreground/50 border-2 border-dashed border-white/5 rounded-2xl">
+                    <div className="flex flex-col items-center justify-center h-40 text-muted-foreground/50 border-2 border-dashed border-white/5 rounded-2xl [.forest_&]:text-white/60 [.forest_&]:border-white/20">
                         <p>No activity recorded for this day.</p>
                     </div>
                 ) : (

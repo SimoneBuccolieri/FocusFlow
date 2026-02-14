@@ -22,7 +22,7 @@ export default async function CommunityPage() {
 
             <div className="container mx-auto px-4 pt-32 max-w-6xl space-y-12 relative z-10">
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
+                    <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-white/60 bg-clip-text text-transparent">
                         Community
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-xl mx-auto">

@@ -56,7 +56,7 @@ export function Timer({ timeLeft, isActive, mode, toggleTimer, resetTimer, stopA
                 isActive ? "opacity-100 scale-125 bg-primary/30" : "opacity-30 scale-90"
             )} />
 
-            <div className="glass p-8 md:p-12 rounded-[2.5rem] w-full flex flex-col items-center relative overflow-hidden backdrop-blur-2xl shadow-2xl border border-white/10">
+            <div className="glass p-8 md:p-12 rounded-[2.5rem] w-full flex flex-col items-center relative overflow-hidden shadow-2xl">
 
 
 
@@ -107,7 +107,7 @@ export function Timer({ timeLeft, isActive, mode, toggleTimer, resetTimer, stopA
                         )}>
                             {formatTime(timeLeft)}
                         </div>
-                        <div className="text-sm text-muted-foreground mt-2 font-medium opacity-60">
+                        <div className="text-sm text-muted-foreground mt-2 font-medium opacity-60 [.forest_&]:text-white/80">
                             {isActive ? "Stay focused" : "Ready to start?"}
                         </div>
                     </div>

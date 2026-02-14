@@ -86,7 +86,7 @@ export async function deleteSession(sessionId: string): Promise<any> {
 // Update user preferences (theme/background)
 export async function updateUserPreferences(key: 'theme' | 'backgroundMode', value: string) {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user || !session.user.email) {
+    if (!session || !session.user || !session.user.id) {
         return { success: false, error: "Unauthorized" };
     }
 
@@ -97,7 +97,7 @@ export async function updateUserPreferences(key: 'theme' | 'backgroundMode', val
 
     try {
         await prisma.user.update({
-            where: { email: session.user.email },
+            where: { id: session.user.id },
             data: { [key]: value },
         });
         revalidatePath('/'); // Revalidate to reflect changes if needed server-side
@@ -105,5 +105,31 @@ export async function updateUserPreferences(key: 'theme' | 'backgroundMode', val
     } catch (error) {
         console.error("Failed to update preferences:", error);
         return { success: false, error: "Failed to update preferences" };
+    }
+}
+
+export async function updateProfile(data: { name: string }) {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    if (!data.name || data.name.trim().length === 0) {
+        return { success: false, error: "Name is required" };
+    }
+
+    try {
+        await prisma.user.update({
+            where: { id: session.user.id },
+            data: { name: data.name.trim() },
+        });
+
+        revalidatePath('/profile');
+        revalidatePath('/'); // Update navbar avatar name if displayed
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update profile:", error);
+        return { success: false, error: "Failed to update profile" };
     }
 }

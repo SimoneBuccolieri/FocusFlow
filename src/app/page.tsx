@@ -8,9 +8,24 @@ import { Users, Trophy, ArrowRight } from "lucide-react";
 import { AmbientBackground } from "@/components/layout/AmbientBackground";
 import { DailyFocusWidget } from "@/components/features/stats/DailyFocusWidget";
 
+import { prisma } from "@/lib/prisma";
+
 export default async function Home({ searchParams }: { searchParams: Promise<{ year?: string }> }) {
   const session = await getServerSession(authOptions);
   const params = await searchParams;
+
+  let userName = session?.user?.name;
+
+  if (session?.user?.id) {
+    // Fetch fresh user data to get updated name
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true }
+    });
+    if (user?.name) {
+      userName = user.name;
+    }
+  }
 
   if (!session) {
     return (
@@ -21,10 +36,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center relative z-10">
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter bg-gradient-to-b from-white to-white/40 bg-clip-text text-transparent mb-6">
+          <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-white drop-shadow-lg mb-6">
             FocusFlow
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground/80 font-light max-w-lg mx-auto leading-relaxed mb-10">
+          <p className="text-xl md:text-2xl text-white/90 font-medium max-w-lg mx-auto leading-relaxed mb-10 drop-shadow-md">
             Master your time, visualize your progress, and join a community of focused builders.
           </p>
 
@@ -43,11 +58,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
 
   // Dashboard Logic
   const year = params.year ? parseInt(params.year) : new Date().getFullYear();
-  // Placeholder to ensure syntax validity if I decide to edit.
-  // I will check grep results first.ession.user.id is missing (type issue), we might need to fetch user by email first or fix types.
-  // For now, let's assume session.user.id is available as per NextAuth callbacks we fixed.
-  // If not, we fallback to email if getUserActivity supports it, but we changed it to userId.
-  // Let's coerce it for now as we know we added the callback.
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userId = (session.user as any).id;
 
@@ -85,13 +96,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ y
       {/* Ambient Glow */}
       <AmbientBackground />
 
-      <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10">
+      <div className="container mx-auto px-4 pt-32 max-w-5xl space-y-12 relative z-10 w-full overflow-hidden">
 
         {/* Header */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">Welcome back, <span className="text-primary">{session.user?.name?.split(' ')[0]}</span></h1>
-            <p className="text-muted-foreground text-lg">Ready for another productive session?</p>
+            <h1 className="text-4xl font-bold tracking-tight mb-2 [.forest_&]:text-white">Welcome back, <span className="text-primary">{userName?.split(' ')[0]}</span></h1>
+            <p className="text-muted-foreground text-lg [.forest_&]:text-white/80">Ready for another productive session?</p>
           </div>
 
           {/* Today's Focus Widget */}

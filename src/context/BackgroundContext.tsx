@@ -43,7 +43,7 @@ export function BackgroundProvider({ children, initialMode }: BackgroundProvider
             setBgModeState('empty');
             updatePrefs('empty');
         } else if (mode === 'tree') {
-            setTheme('dark');
+            setTheme('forest'); // Use the new dedicated forest theme
             setBgModeState('forest');
             updatePrefs('forest');
         } else {
@@ -62,7 +62,7 @@ export function BackgroundProvider({ children, initialMode }: BackgroundProvider
             if (savedBg === 'forest') {
                 setFocusModeState('tree');
                 setBgModeState('forest'); // Fix: Actually set the background mode
-                setTheme('dark');
+                setTheme('forest');
             } else {
                 // If the user previously selected light mode, we might want to respect that too?
                 // But for now, let's just ensure bgMode is correct.

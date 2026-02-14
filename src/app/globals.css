@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @config "../../tailwind.config.js";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .forest, .dark *, .forest *));
 
 
 @layer base {
@@ -68,6 +68,38 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
+
+  .forest {
+    --background: 154 44% 18%;
+    /* Dark Green background for fallback */
+    --foreground: 140 30% 96%;
+
+    --card: 154 44% 18%;
+    --card-foreground: 140 30% 96%;
+
+    --popover: 154 44% 18%;
+    --popover-foreground: 140 30% 96%;
+
+    --primary: 142 71% 45%;
+    /* Emerald Green */
+    --primary-foreground: 144 80% 10%;
+
+    --secondary: 150 30% 25%;
+    --secondary-foreground: 140 30% 96%;
+
+    --muted: 150 30% 25%;
+    --muted-foreground: 145 20% 70%;
+
+    --accent: 150 30% 25%;
+    --accent-foreground: 140 30% 96%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 140 30% 96%;
+
+    --border: 150 30% 25%;
+    --input: 150 30% 25%;
+    --ring: 142 71% 45%;
+  }
 }
 
 @layer base {
@@ -84,10 +116,18 @@
 /* Glassmorphism Utilities */
 @layer utilities {
   .glass {
-    @apply bg-white/60 backdrop-blur-xl border border-black/5 shadow-xl dark:bg-white/5 dark:border-white/10 dark:shadow-none;
+    @apply bg-white/60 backdrop-blur-xl border border-black/5 shadow-xl;
+  }
+
+  :is(.dark, .forest) .glass {
+    @apply bg-white/5 border-white/10 shadow-none;
   }
 
   .glass-card {
-    @apply bg-white/50 backdrop-blur-md border border-white/30 dark:bg-gray-900/40 dark:border-white/10;
+    @apply bg-white/50 backdrop-blur-md border border-white/30;
+  }
+
+  :is(.dark, .forest) .glass-card {
+    @apply bg-gray-900/40 border-white/10;
   }
 }

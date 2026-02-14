@@ -103,7 +103,7 @@ export function SessionManager() {
 
             </div>
 
-            <p className="text-sm text-muted-foreground text-center max-w-xs">
+            <p className="text-sm text-muted-foreground text-center max-w-xs [.forest_&]:text-white/80">
                 *Tip: Complete a session to see your heatmap grow.
             </p>
 

@@ -17,7 +17,8 @@ export function CustomDurationSlider({ mode, isActive, customDuration, onDuratio
                     initial={{ opacity: 0, height: 0, y: -10 }}
                     animate={{ opacity: 1, height: 'auto', y: 0 }}
                     exit={{ opacity: 0, height: 0, y: -10 }}
-                    className="w-full max-w-sm glass p-4 rounded-2xl border border-white/5 flex flex-col gap-3 mb-8"
+                    transition={{ duration: 0.3 }}
+                    className="w-full max-w-sm glass p-4 rounded-2xl flex flex-col gap-3 mb-8 overflow-hidden"
                 >
                     <div className="flex justify-between items-center text-sm font-medium">
                         <span className="text-muted-foreground">Duration</span>
