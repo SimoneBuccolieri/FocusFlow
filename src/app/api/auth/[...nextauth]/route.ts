@@ -50,9 +50,36 @@ export const authOptions: NextAuthOptions = {
         strategy: "jwt",
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async signIn({ user, account, profile }) {
+            if (account?.provider === "google" && profile) {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const picture = (profile as any).picture || (profile as any).image;
+                    if (picture && user.email) {
+                        const existingUser = await prisma.user.findUnique({
+                            where: { email: user.email }
+                        });
+
+                        if (existingUser && !existingUser.image) {
+                            await prisma.user.update({
+                                where: { id: existingUser.id },
+                                data: { image: picture }
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error updating user image on sign in:", error);
+                }
+            }
+            return true;
+        },
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id
+            }
+            // Update token if session is updated
+            if (trigger === "update" && session?.name) {
+                token.name = session.name
             }
             return token
         },
