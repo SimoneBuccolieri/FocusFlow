@@ -17,6 +17,7 @@ interface ProfileHeaderProps {
         totalHours: number;
         activeDays: number;
     };
+    isReadOnly?: boolean;
 }
 
 function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?: string | null, size?: "sm" | "md" | "lg" }) {
@@ -37,7 +38,7 @@ function UserAvatar({ image, name, size = "md" }: { image?: string | null, name?
     );
 }
 
-export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
+export function ProfileHeader({ user, stats, isReadOnly = false }: ProfileHeaderProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(user.name || '');
     const [isLoading, setIsLoading] = useState(false);
@@ -65,15 +66,17 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
 
     return (
         <div className="glass p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center gap-8 md:gap-12 relative group">
-            <div className="absolute top-6 right-6 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                <button
-                    onClick={() => setIsEditing(true)}
-                    className="p-2 hover:bg-white/10 rounded-full text-muted-foreground hover:text-primary transition-colors"
-                    title="Edit Profile"
-                >
-                    <Settings size={20} />
-                </button>
-            </div>
+            {!isReadOnly && (
+                <div className="absolute top-6 right-6 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="p-2 hover:bg-white/10 rounded-full text-muted-foreground hover:text-primary transition-colors"
+                        title="Edit Profile"
+                    >
+                        <Settings size={20} />
+                    </button>
+                </div>
+            )}
 
             <UserAvatar image={user.image} name={user.name} size="lg" />
 

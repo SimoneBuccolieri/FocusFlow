@@ -18,7 +18,7 @@ export function Navbar() {
 
     return (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex justify-center px-4 w-full max-w-fit">
-            <nav className="glass px-6 py-3 rounded-full flex items-center gap-8">
+            <nav className="glass px-4 py-2 md:px-6 md:py-3 rounded-full flex items-center gap-4 md:gap-8">
                 <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -65,8 +65,8 @@ export function Navbar() {
 
 
                             <button
-                                onClick={() => signOut()}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-muted-foreground hover:text-destructive"
+                                onClick={() => signOut({ callbackUrl: '/' })}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-muted-foreground hover:text-destructive [.forest_&]:text-white/80 [.forest_&]:hover:text-red-400"
                                 title="Sign Out"
                             >
                                 <LogOut size={18} />
@@ -75,7 +75,7 @@ export function Navbar() {
                     ) : (
                         <Link
                             href="/auth/signin"
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-full text-sm font-medium transition-all hover:shadow-lg hover:shadow-primary/25"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1.5 md:px-5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all hover:shadow-lg hover:shadow-primary/25 whitespace-nowrap"
                         >
                             Sign In
                         </Link>

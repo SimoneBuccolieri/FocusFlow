@@ -152,14 +152,14 @@ export function WeeklyProgress({ data, readonly = false }: WeeklyProgressProps) 
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-primary/20 transition-all group flex items-start justify-between gap-4"
+                                    className="p-5 rounded-2xl bg-white/5 dark:bg-white/5 border border-black/5 dark:border-white/5 hover:border-primary/20 transition-all group flex items-start justify-between gap-4"
                                 >
                                     <div className="flex items-start gap-4">
                                         <div className="mt-1 p-2 rounded-full bg-emerald-500/10 text-emerald-500">
                                             <CheckCircle2 size={18} />
                                         </div>
                                         <div>
-                                            <h4 className="font-semibold text-lg text-white/90">
+                                            <h4 className="font-semibold text-lg text-foreground">
                                                 {session.title || "Untitled Session"}
                                             </h4>
                                             {session.description && (

@@ -21,7 +21,7 @@ interface BackgroundProviderProps {
 }
 
 export function BackgroundProvider({ children, initialMode }: BackgroundProviderProps) {
-    const { setTheme } = useTheme();
+    const { theme, setTheme, resolvedTheme } = useTheme();
     const [bgMode, setBgModeState] = useState<BackgroundMode>((initialMode as BackgroundMode) || 'empty');
     const [focusMode, setFocusModeState] = useState<FocusMode>('default');
     const isMounted = useRef(false);
@@ -50,6 +50,7 @@ export function BackgroundProvider({ children, initialMode }: BackgroundProvider
             // Default (Dark)
             setTheme('dark');
             setBgModeState('empty');
+            setFocusModeState('default');
             updatePrefs('empty');
         }
     };
@@ -61,17 +62,29 @@ export function BackgroundProvider({ children, initialMode }: BackgroundProvider
 
             if (savedBg === 'forest') {
                 setFocusModeState('tree');
-                setBgModeState('forest'); // Fix: Actually set the background mode
+                setBgModeState('forest');
                 setTheme('forest');
             } else {
-                // If the user previously selected light mode, we might want to respect that too?
-                // But for now, let's just ensure bgMode is correct.
-                // If savedBg is 'empty', we check if theme is light? 
-                // Next-themes handles the theme part, we just need to match focusMode status.
+                // Check resolved theme and sync focus mode on mount
+                // resolvedTheme might be undefined on first render, so we rely on theme or system preference
             }
             isMounted.current = true;
         }
     }, [initialMode, setTheme]);
+
+    // Sync FocusMode with Resolved Theme (Handles hydration and external changes)
+    useEffect(() => {
+        if (resolvedTheme === 'light' && focusMode !== 'light') {
+            setFocusModeState('light');
+        } else if (resolvedTheme === 'dark' && focusMode !== 'default' && bgMode !== 'forest') {
+            // Only set to default (dark) if we are not in forest mode (which is also dark-ish but special)
+            // Actually forest theme is 'forest', so resolvedTheme would be 'forest' (if supported) or 'dark' (if fallback).
+            // Wait, we defined 'forest' as a custom theme in Providers.tsx themes={['light', 'dark', 'forest']}
+            setFocusModeState('default');
+        } else if (theme === 'forest' && focusMode !== 'tree') {
+            setFocusModeState('tree');
+        }
+    }, [resolvedTheme, theme, focusMode, bgMode]);
 
     return (
         <BackgroundContext.Provider value={{ bgMode, focusMode, setFocusMode: changeFocusMode }}>

@@ -34,19 +34,19 @@ export default async function CommunityPage() {
                     {users.map((user) => (
                         <Link href={`/u/${user.id}`} key={user.id} className="group relative">
                             <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className="glass p-6 rounded-3xl border border-white/5 hover:border-white/20 transition-all h-full flex flex-col items-center text-center gap-4 relative overflow-hidden">
+                            <div className="glass p-6 rounded-3xl border border-white/5 hover:border-white/20 transition-all h-full flex flex-row items-center text-left gap-4 relative overflow-hidden">
 
-                                <div className="relative w-24 h-24 rounded-full border-4 border-white/5 overflow-hidden group-hover:scale-105 transition-transform duration-500">
+                                <div className="relative w-16 h-16 rounded-full border-2 border-white/5 overflow-hidden group-hover:scale-105 transition-transform duration-500 shrink-0">
                                     {user.image ? (
                                         <Image src={user.image} alt={user.name || "User"} fill className="object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-primary/20 flex items-center justify-center text-primary">
-                                            <User size={40} />
+                                            <User size={24} />
                                         </div>
                                     )}
                                 </div>
 
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="font-bold text-lg truncate w-full">{user.name}</h3>
                                     <p className="text-sm text-muted-foreground">{user.totalMinutes ? Math.round(user.totalMinutes / 60) : 0} hours focused</p>
                                 </div>

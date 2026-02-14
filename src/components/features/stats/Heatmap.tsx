@@ -71,10 +71,10 @@ export function Heatmap({ data, year = new Date().getFullYear(), isEditable = fa
 
     const getColor = (count: number) => {
         if (count === 0) return 'bg-muted/50 dark:bg-white/5 border border-black/10 dark:border-transparent hover:bg-muted dark:hover:bg-white/10';
-        if (count < 30) return 'bg-emerald-950/40 hover:bg-emerald-950/60 border border-emerald-900/20'; // Very subtle
-        if (count < 60) return 'bg-emerald-900/60 hover:bg-emerald-900/80 border border-emerald-800/30';
-        if (count < 120) return 'bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-500/30';
-        return 'bg-emerald-400 shadow-[0_0_10px_theme(colors.emerald.400)] hover:bg-emerald-300 border border-emerald-300/50';
+        if (count < 30) return 'bg-emerald-500/40 hover:bg-emerald-500/60 border border-emerald-500/20'; // Vivid Low
+        if (count < 60) return 'bg-emerald-500/70 hover:bg-emerald-500/90 border border-emerald-400/30'; // Vivid Medium
+        if (count < 120) return 'bg-emerald-500 hover:bg-emerald-400 border border-emerald-400/50'; // Vivid High
+        return 'bg-emerald-400 shadow-[0_0_12px_theme(colors.emerald.400)] hover:bg-emerald-300 border border-emerald-300'; // Fluorescent
     };
 
     const getTooltip = (count: number, date: Date) => {
@@ -116,10 +116,10 @@ export function Heatmap({ data, year = new Date().getFullYear(), isEditable = fa
                         <span>Meno</span>
                         <div className="flex gap-1">
                             <div className="w-3 h-3 rounded-sm bg-muted/50 dark:bg-white/5 border border-black/10 dark:border-transparent" />
-                            <div className="w-3 h-3 rounded-sm bg-emerald-950/40 border border-emerald-900/20" />
-                            <div className="w-3 h-3 rounded-sm bg-emerald-900/60 border border-emerald-800/30" />
-                            <div className="w-3 h-3 rounded-sm bg-emerald-600/80 border border-emerald-500/30" />
-                            <div className="w-3 h-3 rounded-sm bg-emerald-400 shadow-[0_0_4px_theme(colors.emerald.400)]" />
+                            <div className="w-3 h-3 rounded-sm bg-emerald-500/40 border border-emerald-500/20" />
+                            <div className="w-3 h-3 rounded-sm bg-emerald-500/70 border border-emerald-400/30" />
+                            <div className="w-3 h-3 rounded-sm bg-emerald-500 border border-emerald-400/50" />
+                            <div className="w-3 h-3 rounded-sm bg-emerald-400 shadow-[0_0_6px_theme(colors.emerald.400)]" />
                         </div>
                         <span>Più</span>
                     </div>
@@ -229,9 +229,8 @@ export function Heatmap({ data, year = new Date().getFullYear(), isEditable = fa
                                             )}
                                         </div>
 
-                                        {/* Actions */}
                                         {isEditable && (
-                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                     onClick={() => setEditingSession(session)}
                                                     className="p-2 hover:bg-white/10 rounded-lg text-muted-foreground hover:text-primary transition-colors"

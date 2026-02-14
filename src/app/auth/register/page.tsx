@@ -62,7 +62,7 @@ export default function RegisterPage() {
             <AmbientBackground />
 
             <div className="w-full max-w-md p-8 glass rounded-3xl relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <Link href="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/" className="absolute top-6 left-6 text-muted-foreground hover:text-foreground transition-colors [.forest_&]:text-white/70 [.forest_&]:hover:text-white">
                     <ArrowLeft size={24} />
                 </Link>
 
