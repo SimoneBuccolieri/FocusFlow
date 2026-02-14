@@ -2,9 +2,9 @@
 
 import { Play, Pause, RotateCcw, Coffee, Brain, BatteryCharging, Save, Sliders } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { usePomodoro } from '@/hooks/usePomodoro';
+import { useTimer } from '@/context/TimerContext';
 
-type TimerProps = Omit<ReturnType<typeof usePomodoro>, 'stopAndSave'> & {
+type TimerProps = Omit<ReturnType<typeof useTimer>, 'stopAndSave'> & {
     stopAndSave: () => void | Promise<void>;
 };
 

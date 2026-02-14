@@ -28,6 +28,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
+import { TimerProvider } from "@/context/TimerContext";
 
 export default async function RootLayout({
   children,
@@ -51,11 +52,13 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Providers initialTheme={userPrefs.theme} initialBgMode={userPrefs.backgroundMode}>
-          <GlobalBackground />
-          <Navbar />
-          <PageTransition>
-            {children}
-          </PageTransition>
+          <TimerProvider>
+            <GlobalBackground />
+            <Navbar />
+            <PageTransition>
+              {children}
+            </PageTransition>
+          </TimerProvider>
         </Providers>
       </body>
     </html>

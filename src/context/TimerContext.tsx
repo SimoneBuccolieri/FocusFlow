@@ -1,8 +1,22 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 
 export type TimerMode = 'pomodoro' | 'shortBreak' | 'longBreak' | 'custom';
+
+interface TimerContextType {
+    mode: TimerMode;
+    timeLeft: number;
+    isActive: boolean;
+    customDuration: number;
+    switchMode: (newMode: TimerMode, newDuration?: number) => void;
+    toggleTimer: () => void;
+    resetTimer: () => void;
+    stopAndSave: (() => number);
+    // Expose helpers if needed
+}
+
+const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
 const MODES: Record<string, number> = {
     pomodoro: 25 * 60,
@@ -11,7 +25,15 @@ const MODES: Record<string, number> = {
     custom: 60 * 60, // Default
 };
 
-export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => {
+export const useTimer = () => {
+    const context = useContext(TimerContext);
+    if (!context) {
+        throw new Error('useTimer must be used within a TimerProvider');
+    }
+    return context;
+};
+
+export function TimerProvider({ children }: { children: React.ReactNode }) {
     const [mode, setMode] = useState<TimerMode>('pomodoro');
     const [customDuration, setCustomDuration] = useState(MODES.custom);
     const [timeLeft, setTimeLeft] = useState(MODES.pomodoro);
@@ -32,7 +54,6 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
         const savedCustomDuration = localStorage.getItem('pomodoro-customDuration');
 
         if (savedCustomDuration) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCustomDuration(parseInt(savedCustomDuration));
         }
 
@@ -81,7 +102,7 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
     const switchMode = useCallback((newMode: TimerMode, newDuration?: number) => {
         setMode(newMode);
 
-        let duration = MODES[newMode];
+        let duration: number;
         if (newMode === 'custom') {
             if (newDuration) {
                 setCustomDuration(newDuration);
@@ -89,8 +110,11 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
             } else {
                 duration = customDuration;
             }
+        } else {
+            duration = MODES[newMode];
         }
 
+        // When switching modes, always stop logic first
         setTimeLeft(duration);
         setIsActive(false);
         endTimeRef.current = null;
@@ -106,6 +130,7 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
             requestNotificationPermission();
             setIsActive(true);
             const now = Date.now();
+            // Calculate end time based on current timeLeft
             endTimeRef.current = now + timeLeft * 1000;
         }
     }, [isActive, timeLeft, requestNotificationPermission]);
@@ -116,35 +141,12 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
         endTimeRef.current = null;
     }, [getTotalTime]);
 
-    const lastTickRef = useRef<number>(0);
-
+    // Timer Interval logic
     useEffect(() => {
         if (!isActive || !endTimeRef.current) return;
 
-        lastTickRef.current = Date.now(); // Reset tick on start
-
         const interval = setInterval(() => {
             const now = Date.now();
-            const delta = now - lastTickRef.current;
-
-            // Anti-Cheat: Detect sleep or significant drift (> 5 seconds)
-            if (delta > 5000) {
-                // Sleep detected! Pause the timer.
-                setIsActive(false);
-
-                // Let's approximate: timeLeft is roughly (endTime - lastTickRef)/1000
-                // We update timeLeft state to this value and clear endTime.
-                const preservedTimeLeft = Math.ceil((endTimeRef.current! - lastTickRef.current) / 1000);
-
-                setTimeLeft(preservedTimeLeft > 0 ? preservedTimeLeft : 0);
-                endTimeRef.current = null;
-
-                // console.log("Timer paused due to user inactivity/sleep");
-                return;
-            }
-
-            lastTickRef.current = now;
-
             const remaining = Math.ceil((endTimeRef.current! - now) / 1000);
 
             if (remaining <= 0) {
@@ -158,22 +160,20 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
                         body: `${mode === 'pomodoro' ? 'Focus session' : 'Timer'} finished.`,
                     });
                 }
-
-                if (onComplete) {
-                    onComplete(getTotalTime());
-                }
-
             } else {
                 setTimeLeft(remaining);
             }
         }, 200);
 
         return () => clearInterval(interval);
-    }, [isActive, mode, onComplete, getTotalTime]);
+    }, [isActive, mode]);
 
     const stopAndSave = useCallback(() => {
         const totalTime = getTotalTime();
-        if (!isActive && timeLeft === totalTime) return 0; // Nothing to save
+        // If timer is running or paused but not started, handle appropriately
+        // Actually if not active and timeLeft == totalTime, means we just reset or haven't started.
+
+        if (!isActive && timeLeft === totalTime) return 0;
 
         // Calculate elapsed time
         const elapsed = totalTime - timeLeft;
@@ -187,14 +187,20 @@ export const usePomodoro = (onComplete?: (durationSeconds?: number) => void) => 
         return 0;
     }, [isActive, timeLeft, getTotalTime]);
 
-    return {
+    const contextValue: TimerContextType = {
+        mode,
         timeLeft,
         isActive,
-        mode,
         customDuration,
         switchMode,
         toggleTimer,
         resetTimer,
         stopAndSave
     };
-};
+
+    return (
+        <TimerContext.Provider value={contextValue}>
+            {children}
+        </TimerContext.Provider>
+    );
+}

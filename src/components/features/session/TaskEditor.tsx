@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Target, Quote, Coffee } from 'lucide-react';
 import { Checklist } from './Checklist';
 import { ChecklistItem } from '@/types';
-import { TimerMode } from '@/hooks/usePomodoro';
+import { TimerMode } from '@/context/TimerContext';
 
 interface TaskEditorProps {
     mode: TimerMode;
@@ -56,7 +56,7 @@ export function TaskEditor({
                             <label className="text-xs font-semibold text-muted-foreground ml-1 group-focus-within:text-primary transition-colors [.forest_&]:text-white/70">TASK TITLE</label>
                             <input
                                 type="text"
-                                placeholder="Designing the new homepage..."
+                                placeholder="Study session..."
                                 value={sessionTitle}
                                 onChange={(e) => setSessionTitle(e.target.value)}
                                 className="w-full bg-muted/50 dark:bg-white/5 border border-border/50 dark:border-white/5 rounded-2xl px-5 py-4 text-lg font-medium placeholder:text-muted-foreground/30 [.forest_&]:placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-background/50 dark:focus:bg-white/10 transition-all shadow-inner [.forest_&]:text-white"

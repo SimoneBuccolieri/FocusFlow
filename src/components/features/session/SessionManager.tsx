@@ -1,32 +1,65 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { saveSession } from '@/app/actions';
-import { usePomodoro } from '@/hooks/usePomodoro';
+import { useTimer } from '@/context/TimerContext';
 import { Timer } from "@/components/features/timer/Timer";
 import { ModeSelector } from "./ModeSelector";
 import { TaskEditor } from "./TaskEditor";
-import { SessionModal } from "./SessionModal";
 import { ChecklistItem } from '@/types';
 import { CustomDurationSlider } from './CustomDurationSlider';
 
 export function SessionManager() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [sessionTitle, setSessionTitle] = useState('');
     const [sessionDescription, setSessionDescription] = useState('');
     const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
 
-    const handleTimerComplete = useCallback(() => {
-        // Play notification sound?
-        const audio = new Audio('/sounds/bell.mp3');
-        audio.play().catch(e => console.log("Audio play failed", e));
+    const pomodoroState = useTimer();
+    const { mode, switchMode, isActive, customDuration, timeLeft, resetTimer } = pomodoroState;
 
-        // Open modal
-        setIsModalOpen(true);
-    }, []);
+    const handleAutoSave = useCallback(async () => {
+        // Calculate duration based on mode
+        let duration = 0;
+        switch (mode) {
+            case 'pomodoro': duration = 25 * 60; break;
+            case 'shortBreak': duration = 5 * 60; break;
+            case 'longBreak': duration = 15 * 60; break;
+            case 'custom': duration = customDuration; break;
+        }
 
-    const pomodoroState = usePomodoro(handleTimerComplete);
-    const { mode, switchMode, isActive, customDuration } = pomodoroState;
+        try {
+            await saveSession({
+                durationSeconds: duration,
+                title: sessionTitle || "Focus Session",
+                description: sessionDescription,
+                privateNotes: "",
+                checklist: checklist.filter(i => i.text.trim().length > 0),
+            });
+
+            // Reset form
+            setSessionTitle('');
+            setSessionDescription('');
+            setChecklist([]);
+
+            // Notification toast could be added here
+            console.log("Session auto-saved successfully");
+        } catch (error) {
+            console.error("Failed to auto-save session:", error);
+        }
+    }, [mode, customDuration, sessionTitle, sessionDescription, checklist]);
+
+    // Handle Timer Completion
+    useEffect(() => {
+        if (!isActive && timeLeft === 0) {
+            // Play notification sound
+            const audio = new Audio('/sounds/bell.mp3');
+            audio.play().catch(e => console.log("Audio play failed", e));
+
+            // Auto-save and reset
+            handleAutoSave();
+            resetTimer();
+        }
+    }, [isActive, timeLeft, handleAutoSave, resetTimer]);
 
     const handleManualSave = async () => {
         const elapsed = pomodoroState.stopAndSave();
@@ -48,16 +81,6 @@ export function SessionManager() {
                 console.error("Failed to save session:", error);
                 alert("Failed to save session. Please try again.");
             }
-        }
-    };
-
-    // Update completed duration based on mode
-    const getDuration = () => {
-        switch (pomodoroState.mode) {
-            case 'pomodoro': return 25 * 60;
-            case 'shortBreak': return 5 * 60;
-            case 'longBreak': return 15 * 60;
-            case 'custom': return pomodoroState.customDuration;
         }
     };
 
@@ -106,16 +129,6 @@ export function SessionManager() {
             <p className="text-sm text-muted-foreground text-center max-w-xs [.forest_&]:text-white/80">
                 *Tip: Complete a session to see your heatmap grow.
             </p>
-
-            <SessionModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                completedDuration={getDuration()}
-                initialTitle={sessionTitle}
-                initialDescription={sessionDescription}
-                initialChecklist={checklist}
-                onChecklistChange={setChecklist}
-            />
         </div>
     );
 }

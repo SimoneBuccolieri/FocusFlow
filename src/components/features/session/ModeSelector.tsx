@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { TimerMode } from '@/hooks/usePomodoro';
+import { TimerMode } from '@/context/TimerContext';
 import { Brain, Coffee, BatteryCharging, Sliders } from 'lucide-react';
 
 interface ModeSelectorProps {
